@@ -1,7 +1,7 @@
 import signal
 from contextlib import contextmanager
 
-from source.exceptions import TimeoutException
+from exceptions import TimeoutException
 
 
 # WARNING: ONLY WORKS ON UNIX SYSTEMS!
