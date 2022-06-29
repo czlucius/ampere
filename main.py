@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - [%(levelname)s]
 logging.debug('Start of program')
 
 TOKEN = os.environ["POETRY_CALCBOT_BOT_TOKEN"]
-bot = discord.Bot(debug_guilds=["845602264490967060"])
+bot = discord.Bot()
 
 parser = Parser()
 
