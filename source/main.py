@@ -1,0 +1,110 @@
+import logging, os
+import discord
+
+from py_expression_eval import Parser
+
+from exceptions import InvalidExpressionException, TimeoutException
+from utils.general import get_latency_ms
+from utils.timeout import time_limit
+
+logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - [%(levelname)s] - %(message)s')
+logging.debug('Start of program')
+
+TOKEN = os.environ["POETRY_CALCBOT_BOT_TOKEN"]
+bot = discord.Bot(debug_guilds=["845602264490967060"])
+
+parser = Parser()
+
+
+@bot.event
+async def on_ready():
+    logging.info(f"{bot.user} has connected to Discord as {bot.user.name}")
+
+
+@bot.slash_command(name="ping", description="Ping the bot")
+async def ping(ctx):
+    latency_ms = get_latency_ms(bot)
+    embed = discord.Embed(
+        title="Pong!",
+        description=f"Latency: {latency_ms} ms"
+    )
+    logging.info(f"/ping: latency is {latency_ms} ms")
+
+    await ctx.respond(embed=embed)
+
+
+@bot.slash_command(name="hello", description="Says hello")
+async def hello(ctx):
+    logging.info("/hello: Hello!")
+
+    await ctx.respond("Hello!")
+
+
+@bot.slash_command(name="calculate", description="Calculate expression")
+@discord.option("expression", description="Enter a mathematical expression to be evaluated")
+@discord.option("precision", discord.SlashCommandOptionType.integer,
+                description="Specify the precision in decimal points. (e.g. 3)", required=False)
+async def calculate(ctx, expression, precision):
+    logging.info(f"/calculate: expression={expression}, precision={precision}")
+
+    try:
+        with time_limit(2, "Command timed out."):
+            try:
+                parsed = parser.parse(expression)
+            except TimeoutException:
+                raise
+            except Exception:
+                raise InvalidExpressionException("Parsing error.")
+
+            try:
+                # NOTE: this may introduce a DDoS vulnerability as people may try to calculate a very large and expensive expression which will freeze the machine.
+                result = parsed.evaluate({})
+                logging.info(f"/calculate: result={result}")
+            except TimeoutException:
+                raise
+            except Exception:
+                raise InvalidExpressionException("Invalid expression.")
+
+            # Round to set precision.
+            if precision:
+
+                try:
+                    precision_int = int(precision)
+                    result = format(result, f".{precision_int}f")
+                except ValueError:
+                    raise InvalidExpressionException("Invalid precision.")
+
+            result_length = len(str(result))
+            if result_length > 2000:
+                raise InvalidExpressionException("Result too long. Max 2000 characters.")
+            elif result_length > 1024:
+                await ctx.respond(result)
+                return
+            else:
+                embed = discord.Embed(
+                    title="Expression result",
+                    color=discord.Colour.blue()
+                )
+                embed.add_field(name="Original expression", value=expression)
+                if precision:
+                    embed.add_field(name="Precision", value=precision)
+                embed.add_field(name="Result", value=result)
+
+
+    except (InvalidExpressionException, TimeoutException) as err:
+
+        logging.error("Error at /calculate parsing: %s" % err)
+        embed = discord.Embed(
+            title="Error!",
+            description=str(err),
+            color=discord.Colour.red()
+        )
+
+        embed.add_field(name="Expression", value=expression)
+        if precision:
+            embed.add_field(name="Precision", value=precision)
+
+    await ctx.respond(embed=embed)
+
+
+bot.run(TOKEN)
