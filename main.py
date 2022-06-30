@@ -4,7 +4,7 @@ import discord
 from py_expression_eval import Parser
 
 from exceptions import InvalidExpressionException, TimeoutException
-from utils.general import get_latency_ms
+from utils.general import get_latency_ms, escape_from_md
 from utils.timeout import time_limit
 
 logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - [%(levelname)s] - %(message)s')
@@ -87,7 +87,7 @@ async def calculate(ctx, expression, precision):
                     title="Expression result",
                     color=discord.Colour.blue()
                 )
-                embed.add_field(name="Original expression", value=expression)
+                embed.add_field(name="Original expression", value=escape_from_md(expression))
                 if precision:
                     embed.add_field(name="Precision", value=precision)
                 embed.add_field(name="Result", value=result)
@@ -101,7 +101,7 @@ async def calculate(ctx, expression, precision):
             color=discord.Colour.red()
         )
 
-        embed.add_field(name="Expression", value=expression)
+        embed.add_field(name="Expression", value=escape_from_md(expression))
         if precision:
             embed.add_field(name="Precision", value=precision)
 
