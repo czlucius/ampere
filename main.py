@@ -1,5 +1,5 @@
 import logging, os
-import discord 
+import discord
 
 from py_expression_eval import Parser
 
@@ -49,6 +49,10 @@ async def calculate(ctx, expression, precision):
 
     try:
         with time_limit(2, "Command timed out."):
+            expr_length = len(str(expression))
+            if expr_length > 1024:
+                raise InvalidExpressionException("Result too long. Max 1024 characters.")
+
             try:
                 parsed = parser.parse(expression)
             except TimeoutException:
@@ -87,7 +91,6 @@ async def calculate(ctx, expression, precision):
                 if precision:
                     embed.add_field(name="Precision", value=precision)
                 embed.add_field(name="Result", value=result)
-
 
     except (InvalidExpressionException, TimeoutException) as err:
 
