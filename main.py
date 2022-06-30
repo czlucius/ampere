@@ -48,10 +48,12 @@ async def calculate(ctx, expression, precision):
     logging.info(f"/calculate: expression={expression}, precision={precision}")
 
     try:
+        expression_too_long = False
         with time_limit(2, "Command timed out."):
-            expr_length = len(str(expression))
+            expr_length = len(expression)
             if expr_length > 1024:
-                raise InvalidExpressionException("Result too long. Max 1024 characters.")
+                expression_too_long = True
+                raise InvalidExpressionException("Expression too long. Max 1024 characters.")
 
             try:
                 parsed = parser.parse(expression)
@@ -100,8 +102,8 @@ async def calculate(ctx, expression, precision):
             description=str(err),
             color=discord.Colour.red()
         )
-
-        embed.add_field(name="Expression", value=escape_from_md(expression))
+        if not expression_too_long:
+            embed.add_field(name="Expression", value=escape_from_md(expression))
         if precision:
             embed.add_field(name="Precision", value=precision)
 
