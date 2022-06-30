@@ -48,12 +48,10 @@ async def calculate(ctx, expression, precision):
     logging.info(f"/calculate: expression={expression}, precision={precision}")
 
     try:
-        expression_too_long = False
+        expr_length = len(escape_from_md(expression))
+        expression_too_long = expr_length > 1024
+
         with time_limit(2, "Command timed out."):
-            expr_length = len(escape_from_md(expression))
-            if expr_length > 1024:
-                expression_too_long = True
-                raise InvalidExpressionException("Expression too long. Max 1024 characters (all markdown symbols are escaped with an escape character).")
 
             try:
                 parsed = parser.parse(expression)
@@ -89,14 +87,15 @@ async def calculate(ctx, expression, precision):
                     title="Expression result",
                     color=discord.Colour.blue()
                 )
-                embed.add_field(name="Original expression", value=escape_from_md(expression))
+                if not expression_too_long:
+                    embed.add_field(name="Original expression", value=escape_from_md(expression))
                 if precision:
                     embed.add_field(name="Precision", value=precision)
                 embed.add_field(name="Result", value=result)
 
     except (InvalidExpressionException, TimeoutException) as err:
 
-        logging.error("Error at /calculate parsing: %s" % err)
+        logging.error(f"/calculate error in parsing: {err} - {type(err)}")
         embed = discord.Embed(
             title="Error!",
             description=str(err),
