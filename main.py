@@ -75,11 +75,9 @@ async def calculate(ctx, expression, precision):
                     raise InvalidExpressionException("Invalid precision.")
 
             result_length = len(str(result))
-            if result_length > 2000:
-                raise InvalidExpressionException("Result too long. Max 2000 characters.")
-            elif result_length > 1024:
-                await ctx.respond(result)
-                return
+            if result_length > 1024:
+                raise InvalidExpressionException("Result too long. Max 1024 characters.")
+
             else:
                 embed = discord.Embed(
                     title="Expression result",
