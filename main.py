@@ -50,10 +50,10 @@ async def calculate(ctx, expression, precision):
     try:
         expression_too_long = False
         with time_limit(2, "Command timed out."):
-            expr_length = len(expression)
+            expr_length = len(escape_from_md(expression))
             if expr_length > 1024:
                 expression_too_long = True
-                raise InvalidExpressionException("Expression too long. Max 1024 characters.")
+                raise InvalidExpressionException("Expression too long. Max 1024 characters (all markdown symbols are escaped with an escape character).")
 
             try:
                 parsed = parser.parse(expression)
