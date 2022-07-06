@@ -1,3 +1,7 @@
+import discord
+
+from main.exceptions import InputTooLongException
+
 MARKDOWN_CHARS_TO_ESC = {"*": "\\*", "_": "\\_", "~": "\\~", "`": "\\`", ">": "\\>"}
 
 
@@ -12,3 +16,7 @@ def escape_from_md(content):
     for charset in MARKDOWN_CHARS_TO_ESC.items():
         content = content.replace(*charset)
     return content
+
+
+def dummy_func(*args, **kwargs):
+    pass

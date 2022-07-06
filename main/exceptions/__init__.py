@@ -3,3 +3,6 @@ class InvalidExpressionException(Exception):
 
 class TimeoutException(Exception):
     pass
+
+class InputTooLongException(Exception):
+    pass
