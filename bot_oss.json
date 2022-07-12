@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Poetry",
+    "description": "Dependency Management for Python",
+    "license": "MIT License",
+    "license-url": "https://github.com/python-poetry/poetry/blob/master/LICENSE",
+    "copyright-notice": "Copyright (c) 2018 Sébastien Eustace",
+    "source": "https://github.com/python-poetry/poetry"
+  },
+  {
+    "name": "Pycord",
+    "description": "An API wrapper for Discord written in Python",
+    "license": "MIT License",
+    "license-url": "https://github.com/Pycord-Development/pycord/blob/master/LICENSE",
+    "copyright-notice": "Copyright (c) 2015-2021 Rapptz\nCopyright (c) 2021-present Pycord Development",
+    "source": "https://github.com/Pycord-Development/pycord"
+  },
+  {
+    "name": "py-expression-eval",
+    "description": "Python Mathematical Expression Evaluator",
+    "license": "MIT License",
+    "license-url": "https://github.com/Pycord-Development/pycord/blob/master/LICENSE",
+    "copyright-notice": "None",
+    "source": "https://github.com/AxiaCore/py-expression-eval"
+  }
+]
