@@ -3,26 +3,33 @@ from typing import Callable
 import discord
 
 from main.exceptions import InputTooLongException
-from main.utils.general import escape_from_md, dummy_func
+from main.utils.general import escape_from_md
+
+
+def dummy_escape(content):
+    return content
 
 
 class SafeEmbed(discord.Embed):
+    exc_callback = lambda: InputTooLongException(
+        "Field is too long to display in embed.")
+
     def safe_append_field(self, field: discord.EmbedField, strip_md: bool = False, error: bool = False,
-                          exc_callback: Callable = lambda: InputTooLongException(
-                              "Field is too long to display in embed.")):
-        processor = escape_from_md if strip_md else dummy_func
-        name = processor(field.name)
-        value = processor(field.value)
+                          exc_callback: Callable = exc_callback):
+        processor = escape_from_md if strip_md else dummy_escape
+
+        name = processor(field.name if field.name is not None else "")
+        value = processor(field.value if field.value is not None else "")
 
         if len(name) > 1024 or len(value) > 1024:
             # Cannot add this field!
             if error:
-                exc_callback
+                exc_callback()
         else:
             self.append_field(field)
 
-    def safe_add_field(self, name: str, value: str, inline: bool = True, strip_md: bool = False, error: bool = False,
-                       exc_callback: Callable = lambda: InputTooLongException(
-                           "Field is too long to display in embed.")):
+    def safe_add_field(self, name: str, value: str, inline: bool = False, strip_md: bool = False, error: bool = False,
+                       exc_callback: Callable = exc_callback):
 
-        self.safe_append_field(discord.EmbedField(str(name), str(value), bool(inline)), strip_md=strip_md, error=error, exc_callback=exc_callback)
+        self.safe_append_field(discord.EmbedField(str(name), str(value), bool(inline)), strip_md=strip_md, error=error,
+                               exc_callback=exc_callback)
