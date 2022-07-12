@@ -34,7 +34,7 @@ def tle_exit_gracefully(seconds: int, ctx: discord.ApplicationContext, title="Er
             for field in additional_fields:
                 if type(field) == discord.EmbedField:
                     embed.safe_append_field(field, True)
-        await ctx.respond()
+        ctx.respond(embed=embed)
 
     signal.signal(signal.SIGALRM, signal_handler)
     signal.alarm(seconds)
