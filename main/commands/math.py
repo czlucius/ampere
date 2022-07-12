@@ -10,11 +10,15 @@ from main.models.safeembed import SafeEmbed
 from main.utils.general import *
 from main.utils.timeout import tle_exit_gracefully
 
+CONSTANTS_VALS = {"π": 3.14159265358979323846264338327950288, "e": 2.71828182845904523536028747135266249,
+                  "ϕ": 1.61803398874989484820458683436563811, "Ω": 0.56714329040978387299996866221035554}
+
+
+def get_constants_keys(ctx):
+    return list(CONSTANTS_VALS.keys())
+
 
 class Math(BaseCog):
-    # CONSTANTS = ["π", "e", "ϕ", "Ω"]
-    CONSTANTS_VALS = {"π": 3.14159265358979323846264338327950288, "e": 2.71828182845904523536028747135266249,
-                      "ϕ": 1.61803398874989484820458683436563811, "Ω": 0.56714329040978387299996866221035554}
 
     def __init__(self, bot):
         self.bot = bot
@@ -75,11 +79,11 @@ class Math(BaseCog):
         await ctx.respond(embed=embed)
 
     @commands.slash_command(name="constants", description="Get values of constants")
-    @discord.option("name", discord.SlashCommandOptionType.string, autocomplete=CONSTANTS_VALS.keys())
+    @discord.option("name", autocomplete=get_constants_keys, description="Name of constant")
     async def constants(self, ctx: discord.ApplicationContext, name: str):
 
-        if name in self.CONSTANTS_VALS.keys():
-            value = self.CONSTANTS_VALS[name]
+        if name in CONSTANTS_VALS.keys():
+            value = CONSTANTS_VALS[name]
             embed = SafeEmbed(
                 title=name,
                 description=value
@@ -90,6 +94,6 @@ class Math(BaseCog):
                 description="Constant not found."
             )
 
-        await ctx.respond(embed)
+        logging.info(f"/constants: name={name} embed_desc={embed.description}")
 
-
+        await ctx.respond(embed=embed)
