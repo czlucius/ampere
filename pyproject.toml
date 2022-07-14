@@ -6,8 +6,9 @@ authors = ["Lucius C. <58442255+czlucius@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-py-cord = "^2.0.0rc1"
+py-cord = "^2.0.0"
 py-expression-eval = "^0.3.14"
+base85 = "^2.1.1"
 
 [tool.poetry.dev-dependencies]
 
