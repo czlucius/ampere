@@ -1,3 +1,4 @@
+import logging
 from typing import Callable
 
 import discord
@@ -21,12 +22,14 @@ class SafeEmbed(discord.Embed):
         name = processor(field.name if field.name is not None else "")
         value = processor(field.value if field.value is not None else "")
 
+        logging.info(f"SafeEmbed: value is {value}")
+
         if len(name) > 1024 or len(value) > 1024:
             # Cannot add this field!
             if error:
                 exc_callback()
         else:
-            self.append_field(field)
+            self.add_field(name=name, value=value, inline=field.inline)
 
     def safe_add_field(self, name: str, value: str, inline: bool = False, strip_md: bool = False, error: bool = False,
                        exc_callback: Callable = exc_callback):
