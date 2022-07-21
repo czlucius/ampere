@@ -5,6 +5,7 @@ import discord
 
 from main.commands.math import Math
 from main.commands.misc import Misc
+from main.commands.utils import Utils
 
 try:
     # Easier to test locally
@@ -13,7 +14,7 @@ try:
 except FileNotFoundError:
     TOKEN = os.getenv("TOKEN")
 
-cogs = [Math, Misc]
+cogs = [Math, Misc, Utils]
 bot = discord.Bot()
 
 logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - [%(levelname)s] - %(message)s')
