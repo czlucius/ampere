@@ -2,7 +2,7 @@ import re
 
 from main.conversions import XToY
 from main.exceptions import InvalidExpressionException
-from main.utils.base import base_arb_to_bytes
+from main.functions.base import base_arb_to_bytes
 
 
 class NumericBaseToByteArray(XToY):

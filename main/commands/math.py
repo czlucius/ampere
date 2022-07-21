@@ -7,8 +7,8 @@ from main.commands.basecog import BaseCog
 from main.exceptions import InvalidExpressionException, InputTooLongException
 from main.models.safeembed import SafeEmbed
 
-from main.utils.general import *
-from main.utils.timeout import tle_exit_gracefully
+from main.functions.general import *
+from main.functions.timeout import tle_exit_gracefully
 
 CONSTANTS_VALS = {"π": 3.14159265358979323846264338327950288, "e": 2.71828182845904523536028747135266249,
                   "ϕ": 1.61803398874989484820458683436563811, "Ω": 0.56714329040978387299996866221035554}
@@ -60,6 +60,8 @@ class Math(BaseCog):
                 embed.safe_add_field(name="Original expression", value=expression, strip_md=True)
                 if precision:
                     embed.safe_add_field(name="Precision", value=str(precision))
+                # TODO: you need to call raise! But lambdas CANNOT raise exceptions.
+
                 embed.safe_add_field(name="Result", value=result, error=True, strip_md=True,
                                      exc_callback=lambda: InputTooLongException(
                                          "Result too long. Max 1024 characters."))

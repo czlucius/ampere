@@ -6,7 +6,7 @@ from main.commands.basecog import BaseCog
 from discord.ext import commands
 
 from main.models.safeembed import SafeEmbed
-from main.utils.general import get_latency_ms
+from main.functions.general import get_latency_ms
 
 SOURCE_URL = "https://github.com/czlucius/ampere"
 LICENSE = "GNU AGPL v3.0 License"

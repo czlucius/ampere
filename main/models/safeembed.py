@@ -4,7 +4,7 @@ from typing import Callable
 import discord
 
 from main.exceptions import InputTooLongException
-from main.utils.general import escape_from_md
+from main.functions.general import escape_from_md
 
 
 def dummy_escape(content):
@@ -12,6 +12,7 @@ def dummy_escape(content):
 
 
 class SafeEmbed(discord.Embed):
+    # TODO: you need to call raise! But lambdas CANNOT raise exceptions.
     exc_callback = lambda: InputTooLongException(
         "Field is too long to display in embed.")
 

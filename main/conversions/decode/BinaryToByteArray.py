@@ -4,7 +4,7 @@ from abc import ABC
 
 from main.conversions import XToY
 from main.exceptions import InvalidExpressionException
-from main.utils.base import bitstring_to_bytes
+from main.functions.base import bitstring_to_bytes
 
 
 class BinaryToByteArray(XToY):

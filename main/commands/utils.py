@@ -15,7 +15,7 @@ from main.conversions.encode.ByteArrayToText import ByteArrayToText
 from main.conversions.encode.baseencoded import *
 from main.exceptions import InvalidExpressionException, InputInvalidException, InputTooLongException, EncodeDecodeError
 from main.models.safeembed import SafeEmbed
-from main.utils.general import autocomplete_list
+from main.functions.general import autocomplete_list
 
 INPUT_FORMATS = {
     "binary": BinaryToByteArray,
