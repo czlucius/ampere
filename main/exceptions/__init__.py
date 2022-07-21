@@ -6,3 +6,9 @@ class TimeoutException(Exception):
 
 class InputTooLongException(Exception):
     pass
+
+class InputInvalidException(Exception):
+    pass
+
+class EncodeDecodeError(Exception):
+    pass
