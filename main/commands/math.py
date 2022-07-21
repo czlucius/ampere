@@ -4,7 +4,7 @@ from discord.ext import commands
 from py_expression_eval import Parser
 
 from main.commands.basecog import BaseCog
-from main.exceptions import InvalidExpressionException
+from main.exceptions import InvalidExpressionException, InputTooLongException
 from main.models.safeembed import SafeEmbed
 
 from main.utils.general import *
@@ -14,8 +14,8 @@ CONSTANTS_VALS = {"π": 3.14159265358979323846264338327950288, "e": 2.7182818284
                   "ϕ": 1.61803398874989484820458683436563811, "Ω": 0.56714329040978387299996866221035554}
 
 
-def get_constants_keys(ctx):
-    return list(CONSTANTS_VALS.keys())
+async def get_constants_keys(ctx: discord.AutocompleteContext):
+    return await autocomplete_list(ctx, CONSTANTS_VALS)
 
 
 class Math(BaseCog):
