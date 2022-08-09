@@ -1,12 +1,21 @@
 import base64, base58, base62
+import binascii
 
 from typing import Callable
 from main.conversions import XToY
+from main.exceptions import EncodeDecodeError
 
 
 class ByteArrayToBaseEncoded(XToY):
     def __init__(self, val, function: Callable):
         super().__init__(val)
+
+        def fn(*args, **kwargs):
+            try:
+                function(*args, **kwargs)
+            except (binascii.Error | ValueError) as exc:
+                raise EncodeDecodeError(str(exc))
+
         self.function = function
 
     def transform(self):
