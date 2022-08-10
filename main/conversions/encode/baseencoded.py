@@ -1,4 +1,5 @@
 import base64, base58, base62
+import logging
 import binascii
 
 from typing import Callable
@@ -12,11 +13,12 @@ class ByteArrayToBaseEncoded(XToY):
 
         def fn(*args, **kwargs):
             try:
-                function(*args, **kwargs)
-            except (binascii.Error | ValueError) as exc:
+                return function(*args, **kwargs)
+            except (binascii.Error, ValueError) as exc:
+                logging.info(f"BaseEncodedToByteArray: error occurred: {str(exc)}")
                 raise EncodeDecodeError(str(exc))
 
-        self.function = function
+        self.function = fn
 
     def transform(self):
         val = self.val.strip()
