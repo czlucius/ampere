@@ -13,8 +13,8 @@ def dummy_escape(content):
 
 class SafeEmbed(discord.Embed):
     # TODO: you need to call raise! But lambdas CANNOT raise exceptions.
-    exc_callback = lambda: InputTooLongException(
-        "Field is too long to display in embed.")
+    def exc_callback():
+        raise InputTooLongException("Field is too long to display in embed.")
 
     def safe_append_field(self, field: discord.EmbedField, strip_md: bool = False, error: bool = False,
                           exc_callback: Callable = exc_callback):
