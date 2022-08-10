@@ -1,4 +1,4 @@
-import base64, base58, base62
+import base64, base58, base62, base45
 import logging
 import binascii
 
@@ -31,6 +31,10 @@ class BaseEncodedToByteArray(XToY):
 class Base32ToByteArray(BaseEncodedToByteArray):
     def __init__(self, val):
         super().__init__(val, base64.b32decode)
+
+class Base45ToByteArray(BaseEncodedToByteArray):
+    def __init__(self, val):
+        super().__init__(val, base45.b45decode)
 
 
 class Base58ToByteArray(BaseEncodedToByteArray):
