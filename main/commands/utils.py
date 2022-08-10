@@ -22,6 +22,7 @@ INPUT_FORMATS = {
     "hex": HexToByteArray,
     "text": TextToByteArray,
     "base32": Base32ToByteArray,
+    "base45": Base45ToByteArray,
     "base58": Base58ToByteArray,
     "base62": Base62ToByteArray,
     "base64": Base64ToByteArray,
@@ -34,6 +35,7 @@ OUTPUT_FORMATS = {
     "hex": ByteArrayToHex,
     "text": ByteArrayToText,
     "base32": ByteArrayToBase32,
+    "base45": ByteArrayToBase45,
     "base58": ByteArrayToBase58,
     "base62": ByteArrayToBase62,
     "base64": ByteArrayToBase64,
@@ -108,7 +110,10 @@ class Utils(BaseCog):
                 raise InputInvalidException("Invalid input/output format")
             try:
                 intermediate_bytearray_val = INPUT_FORMATS[x_format](x).transform()
+                logging.info("x2y: intermediate="+ str(intermediate_bytearray_val))
                 y = OUTPUT_FORMATS[y_format](intermediate_bytearray_val).transform()
+                logging.info("x2y: y="+str( y))
+
             except (UnicodeError, UnicodeEncodeError, UnicodeDecodeError):
                 raise EncodeDecodeError("Error in encoding/decoding.")
 
@@ -127,10 +132,11 @@ class Utils(BaseCog):
             embed.safe_add_field(name="Output format", value=y_format)
 
         except (InputInvalidException, InvalidExpressionException, InputTooLongException, EncodeDecodeError) as err:
-            logging.error(f"/x2y error: {err} - {type(err)}")
+            errstr = str(err) if err else "An error occurred."
+            logging.error(f"/x2y error: {errstr} - {type(err)}")
             embed = SafeEmbed(
                 title="Error!",
-                description=str(err),
+                description=errstr,
                 color=discord.Colour.red()
             )
             embed.safe_add_field(name="Input", value=x, strip_md=True)
