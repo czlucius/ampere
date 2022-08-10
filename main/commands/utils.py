@@ -108,16 +108,18 @@ class Utils(BaseCog):
             if x_format not in INPUT_FORMATS.keys() or y_format not in OUTPUT_FORMATS.keys():
                 # Invalid format. Abort.
                 raise InputInvalidException("Invalid input/output format")
+            x = x if x.strip() != "" else "Empty"
             try:
                 intermediate_bytearray_val = INPUT_FORMATS[x_format](x).transform()
                 logging.info("x2y: intermediate="+ str(intermediate_bytearray_val))
                 y = OUTPUT_FORMATS[y_format](intermediate_bytearray_val).transform()
-                logging.info("x2y: y="+str( y))
+                logging.info(f"x2y: y= {y}, type={type(y)}")
 
             except (UnicodeError, UnicodeEncodeError, UnicodeDecodeError):
                 raise EncodeDecodeError("Error in encoding/decoding.")
 
-            logging.info(f"/x2y: {y}")
+            y = y if y.strip() != "" else "Empty"
+            logging.info(f"/x2y: y = {y} (aft transform), and type={type(y)}")
 
             embed = SafeEmbed(
                 title="x2y",
