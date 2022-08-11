@@ -60,7 +60,6 @@ class Math(BaseCog):
                 embed.safe_add_field(name="Original expression", value=expression, strip_md=True)
                 if precision:
                     embed.safe_add_field(name="Precision", value=str(precision))
-                # TODO: you need to call raise! But lambdas CANNOT raise exceptions.
 
                 def if_err():
                     raise InputTooLongException(
