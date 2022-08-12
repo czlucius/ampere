@@ -134,7 +134,7 @@ class Utils(BaseCog):
             embed.safe_add_field(name="Output format", value=y_format)
 
         except (InputInvalidException, InvalidExpressionException, InputTooLongException, EncodeDecodeError) as err:
-            errstr = str(err) if err else "An error occurred."
+            errstr = str(err) if str(err).strip() != "" else "An error occurred."
             logging.error(f"/x2y error: {errstr} - {type(err)}")
             embed = SafeEmbed(
                 title="Error!",
