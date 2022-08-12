@@ -6,8 +6,15 @@ class XToY(abc.ABC):
     TO_UNICODE = 1
     OTHER_CONV = 2
 
-    def __init__(self, val, _type= OTHER_CONV):
+    """
+    parameters:
+    Please supply a list of 
+    """
+
+    def __init__(self, val, input_params=None, output_params=None, _type= OTHER_CONV):
         self.val = val
+        self.input_params = input_params
+        self.output_params = output_params
         self._type = _type
 
     @abc.abstractmethod
@@ -16,3 +23,7 @@ class XToY(abc.ABC):
 
     def get_type(self) -> int:
         return self._type
+
+    def has_params(self):
+        return bool(input_params or output_params)
+    
