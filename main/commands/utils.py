@@ -104,45 +104,55 @@ class Utils(BaseCog):
     @discord.option("y_format", description="Format of output", autocomplete=output_format_autocomplete)
     async def x2y(self, ctx: discord.ApplicationContext, x: str, x_format: str, y_format: str):
         logging.info(f"/x2y: x={x}, x_format={x_format}, y_format={y_format}")
-        try:
-            if x_format not in INPUT_FORMATS.keys() or y_format not in OUTPUT_FORMATS.keys():
-                # Invalid format. Abort.
-                raise InputInvalidException("Invalid input/output format")
-            x = x if x.strip() != "" else "Empty"
+        def conversion_present_embed(params=None):
             try:
-                intermediate_bytearray_val = INPUT_FORMATS[x_format](x).transform()
-                logging.info("x2y: intermediate="+ str(intermediate_bytearray_val))
-                y = OUTPUT_FORMATS[y_format](intermediate_bytearray_val).transform()
-                logging.info(f"x2y: y= {y}, type={type(y)}")
+                if x_format not in INPUT_FORMATS.keys() or y_format not in OUTPUT_FORMATS.keys():
+                    # Invalid format. Abort.
+                    raise InputInvalidException("Invalid input/output format")
+                x = x if x.strip() != "" else "Empty"
+                try:
+                    intermediate_bytearray_val = INPUT_FORMATS[x_format](x, params).transform()
+                    logging.info("x2y: intermediate="+ str(intermediate_bytearray_val))
+                    y = OUTPUT_FORMATS[y_format](intermediate_bytearray_val, params).transform()
+                    logging.info(f"x2y: y= {y}, type={type(y)}")
 
-            except (UnicodeError, UnicodeEncodeError, UnicodeDecodeError):
-                raise EncodeDecodeError("Error in encoding/decoding.")
+                except (UnicodeError, UnicodeEncodeError, UnicodeDecodeError):
+                    raise EncodeDecodeError("Error in encoding/decoding.")
 
-            y = y if y.strip() != "" else "Empty"
-            logging.info(f"/x2y: y = {y} (aft transform), and type={type(y)}")
+                y = y if y.strip() != "" else "Empty"
+                logging.info(f"/x2y: y = {y} (aft transform), and type={type(y)}")
 
-            embed = SafeEmbed(
-                title="x2y",
-                description=f"Conversion from {x_format} to {y_format}",
-                color=discord.Colour.blue()
-            )
-            embed.safe_add_field(name="Input", value=x, strip_md=True)
-            embed.safe_add_field(name="Output", value=y, strip_md=True, error=True, exc_callback=lambda: InputTooLongException(
-                                         "Output too long. Max 1024 characters."))
+                embed = SafeEmbed(
+                    title="x2y",
+                    description=f"Conversion from {x_format} to {y_format}",
+                    color=discord.Colour.blue()
+                )
+                embed.safe_add_field(name="Input", value=x, strip_md=True)
+                embed.safe_add_field(name="Output", value=y, strip_md=True, error=True, exc_callback=lambda: InputTooLongException(
+                                            "Output too long. Max 1024 characters."))
 
-            embed.safe_add_field(name="Input format", value=x_format)
-            embed.safe_add_field(name="Output format", value=y_format)
+                embed.safe_add_field(name="Input format", value=x_format)
+                embed.safe_add_field(name="Output format", value=y_format)
 
-        except (InputInvalidException, InvalidExpressionException, InputTooLongException, EncodeDecodeError) as err:
-            errstr = str(err) if str(err).strip() != "" else "An error occurred."
-            logging.error(f"/x2y error: {errstr} - {type(err)}")
-            embed = SafeEmbed(
-                title="Error!",
-                description=errstr,
-                color=discord.Colour.red()
-            )
-            embed.safe_add_field(name="Input", value=x, strip_md=True)
-            embed.safe_add_field(name="Input format", value=x_format)
-            embed.safe_add_field(name="Output format", value=y_format)
+            except (InputInvalidException, InvalidExpressionException, InputTooLongException, EncodeDecodeError) as err:
+                errstr = str(err) if str(err).strip() != "" else "An error occurred."
+                logging.error(f"/x2y error: {errstr} - {type(err)}")
+                embed = SafeEmbed(
+                    title="Error!",
+                    description=errstr,
+                    color=discord.Colour.red()
+                )
+                embed.safe_add_field(name="Input", value=x, strip_md=True)
+                embed.safe_add_field(name="Input format", value=x_format)
+                embed.safe_add_field(name="Output format", value=y_format)
+            
+            return embed
+        x_class = INPUT_FORMATS[x_format]
+        y_class = OUTPUT_FORMATS[y_format]
+        uses_params = x_class.uses_params() or y_class.uses_params()
 
-        await ctx.respond(embed=embed)
+        if uses_params:
+            # TODO We need to pass the function to the modal which will help to populate it with the right parameters.
+            pass
+        else:
+            await ctx.respond(embed=embed)

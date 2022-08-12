@@ -12,3 +12,6 @@ class InputInvalidException(Exception):
 
 class EncodeDecodeError(Exception):
     pass
+
+class InvalidParametersException(InputInvalidException):
+    pass

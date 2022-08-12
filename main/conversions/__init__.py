@@ -11,10 +11,9 @@ class XToY(abc.ABC):
     Please supply a list of 
     """
 
-    def __init__(self, val, input_params=None, output_params=None, _type= OTHER_CONV):
+    def __init__(self, val, parameters=None, _type= OTHER_CONV):
         self.val = val
-        self.input_params = input_params
-        self.output_params = output_params
+        self.parameters = parameters
         self._type = _type
 
     @abc.abstractmethod
@@ -25,5 +24,12 @@ class XToY(abc.ABC):
         return self._type
 
     def has_params(self):
-        return bool(input_params or output_params)
+        return parameters != None
+
+    @staticmethod    
+    def uses_params():
+        return False # Only classes which have parameters should set this to True.
     
+    @staticmethod
+    def param_name():
+        return None
