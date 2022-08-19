@@ -9,11 +9,14 @@ from main.conversions.decode.BinaryToByteArray import BinaryToByteArray
 from main.conversions.decode.HexToByteArray import HexToByteArray
 from main.conversions.decode.TextToByteArray import TextToByteArray
 from main.conversions.decode.baseencoded import *
+from main.conversions.decode.caesar import CaesarCipherToByteArray
 from main.conversions.encode.ByteArrayToBinary import ByteArrayToBinary
 from main.conversions.encode.ByteArrayToHex import ByteArrayToHex
 from main.conversions.encode.ByteArrayToText import ByteArrayToText
 from main.conversions.encode.baseencoded import *
+from main.conversions.encode.caesar import ByteArrayToCaesarCipher
 from main.exceptions import InvalidExpressionException, InputInvalidException, InputTooLongException, EncodeDecodeError
+from main.modals.params_modals import ParamsModal
 from main.models.safeembed import SafeEmbed
 from main.functions.general import autocomplete_list
 
@@ -26,7 +29,8 @@ INPUT_FORMATS = {
     "base58": Base58ToByteArray,
     "base62": Base62ToByteArray,
     "base64": Base64ToByteArray,
-    "ascii85": Ascii85ToByteArray
+    "ascii85": Ascii85ToByteArray,
+    "caesar-cipher": CaesarCipherToByteArray
 }
 
 
@@ -39,7 +43,8 @@ OUTPUT_FORMATS = {
     "base58": ByteArrayToBase58,
     "base62": ByteArrayToBase62,
     "base64": ByteArrayToBase64,
-    "ascii85": ByteArrayToAscii85
+    "ascii85": ByteArrayToAscii85,
+    "caesar-cipher": ByteArrayToCaesarCipher
 }
 
 async def input_format_autocomplete(ctx: discord.AutocompleteContext):
@@ -104,16 +109,17 @@ class Utils(BaseCog):
     @discord.option("y_format", description="Format of output", autocomplete=output_format_autocomplete)
     async def x2y(self, ctx: discord.ApplicationContext, x: str, x_format: str, y_format: str):
         logging.info(f"/x2y: x={x}, x_format={x_format}, y_format={y_format}")
-        def conversion_present_embed(params=None):
+        def conversion_present_embed(input_params=None, output_params=None):
+            nonlocal x, x_format, y_format
             try:
                 if x_format not in INPUT_FORMATS.keys() or y_format not in OUTPUT_FORMATS.keys():
                     # Invalid format. Abort.
                     raise InputInvalidException("Invalid input/output format")
                 x = x if x.strip() != "" else "Empty"
                 try:
-                    intermediate_bytearray_val = INPUT_FORMATS[x_format](x, params).transform()
-                    logging.info("x2y: intermediate="+ str(intermediate_bytearray_val))
-                    y = OUTPUT_FORMATS[y_format](intermediate_bytearray_val, params).transform()
+                    intermediate_bytearray_val = INPUT_FORMATS[x_format](x, parameters=input_params).transform()
+                    logging.info(f"x2y: intermediate={intermediate_bytearray_val}")
+                    y = OUTPUT_FORMATS[y_format](intermediate_bytearray_val, parameters=output_params).transform()
                     logging.info(f"x2y: y= {y}, type={type(y)}")
 
                 except (UnicodeError, UnicodeEncodeError, UnicodeDecodeError):
@@ -152,7 +158,8 @@ class Utils(BaseCog):
         uses_params = x_class.uses_params() or y_class.uses_params()
 
         if uses_params:
-            # TODO We need to pass the function to the modal which will help to populate it with the right parameters.
-            pass
+            modal = ParamsModal(x_class, y_class, conversion_present_embed, title="Parameters")
+            await ctx.send_modal(modal)
         else:
+            embed = conversion_present_embed()
             await ctx.respond(embed=embed)

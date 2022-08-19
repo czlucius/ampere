@@ -1,4 +1,7 @@
 import abc
+from typing import Optional
+
+from main.modals.params_info import ParamsInfo
 
 
 class XToY(abc.ABC):
@@ -11,7 +14,7 @@ class XToY(abc.ABC):
     Please supply a list of 
     """
 
-    def __init__(self, val, parameters=None, _type= OTHER_CONV):
+    def __init__(self, val, parameters=None, _type=OTHER_CONV):
         self.val = val
         self.parameters = parameters
         self._type = _type
@@ -24,12 +27,17 @@ class XToY(abc.ABC):
         return self._type
 
     def has_params(self):
-        return parameters != None
+        return self.parameters is not None
 
-    @staticmethod    
-    def uses_params():
-        return False # Only classes which have parameters should set this to True.
-    
     @staticmethod
-    def param_name():
+    def uses_params():
+        return False  # Only classes which have parameters should set this to True.
+
+    """
+    Get info on parameter accepted.
+    Will be returned as an object.
+    Info must be of type ParamsInfo.
+    """
+    @staticmethod
+    def param_info() -> Optional[ParamsInfo]:
         return None

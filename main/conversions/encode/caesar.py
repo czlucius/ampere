@@ -7,14 +7,14 @@ from main.modals.params_info import ParamsInfo
 
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-class CaesarCipherToByteArray(XToY):
+class ByteArrayToCaesarCipher(XToY):
 
     def __init__(self, val, parameters):
         super().__init__(val, parameters, _type=XToY.FROM_UNICODE)
 
     def transform(self):
-        logging.info(f"CaesarCipherToByteArray - {self.val}, params = {self.parameters}")
-        val = str(self.val)
+        logging.info(f"ByteArrayToCaesarCipher - {self.val}, params = {self.parameters}")
+        val = self.val.decode("utf-8")
         # The key, as in how many characters to shift.
         shift = self.parameters
         try:
@@ -27,14 +27,14 @@ class CaesarCipherToByteArray(XToY):
             logging.info(f"char in val: {char}")
             if char.isalpha():
                 case = char.isupper()
-                converted = alphabet[(alphabet.index(char.upper()) - shift) % len(alphabet)] # Just overflow if >26 or <-26.
+                converted = alphabet[(alphabet.index(char.upper()) + shift) % len(alphabet)] # Just overflow if >26 or <-26.
                 converted = converted if case else converted.lower()
             else:
                 converted = char
             new += converted
 
-        new_bytes = bytes(new, encoding="utf-8")
-        return new_bytes
+
+        return new
 
 
     @staticmethod

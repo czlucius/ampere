@@ -4,7 +4,7 @@ from main.functions.base import bytes_to_base_arb
 
 class ByteArrayToNumericBase(XToY):
 
-    def __init__(self, val, base: int):
+    def __init__(self, val, base: int, *args, **kwargs):
         super().__init__(val)
         self.base = base
 

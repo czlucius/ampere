@@ -7,7 +7,7 @@ from main.functions.base import base_arb_to_bytes
 
 class NumericBaseToByteArray(XToY):
 
-    def __init__(self, val, group_len: int, valid_chars_regex: str, base: int):
+    def __init__(self, val, group_len: int, valid_chars_regex: str, base: int, *args, **kwargs):
         super().__init__(val)
         self.group_len = group_len
         self.valid_chars_regex = valid_chars_regex

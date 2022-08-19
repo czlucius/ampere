@@ -2,5 +2,5 @@ from main.conversions.encode.ByteArrayToNumericBase import ByteArrayToNumericBas
 
 
 class ByteArrayToHex(ByteArrayToNumericBase):
-    def __init__(self, val):
+    def __init__(self, val, *args, **kwargs):
         super().__init__(val, 16)

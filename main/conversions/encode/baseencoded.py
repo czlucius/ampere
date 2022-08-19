@@ -8,7 +8,7 @@ from main.exceptions import EncodeDecodeError
 
 
 class ByteArrayToBaseEncoded(XToY):
-    def __init__(self, val, function: Callable):
+    def __init__(self, val, function: Callable, *args, **kwargs):
         super().__init__(val)
 
         def fn(*args, **kwargs):
@@ -29,29 +29,29 @@ class ByteArrayToBaseEncoded(XToY):
 
 
 class ByteArrayToBase32(ByteArrayToBaseEncoded):
-    def __init__(self, val):
+    def __init__(self, val, *args, **kwargs):
         super().__init__(val, base64.b32encode)
 
 class ByteArrayToBase45(ByteArrayToBaseEncoded):
-    def __init__(self, val):
+    def __init__(self, val, *args, **kwargs):
         super().__init__(val, base45.b45encode)
 
 
 class ByteArrayToBase58(ByteArrayToBaseEncoded):
-    def __init__(self, val):
+    def __init__(self, val, *args, **kwargs):
         super().__init__(val, base58.b58encode)
 
 
 class ByteArrayToBase62(ByteArrayToBaseEncoded):
-    def __init__(self, val):
+    def __init__(self, val, *args, **kwargs):
         super().__init__(val, lambda barr: bytes(base62.encodebytes(barr), encoding="utf-8"))
 
 
 class ByteArrayToBase64(ByteArrayToBaseEncoded):
-    def __init__(self, val):
+    def __init__(self, val, *args, **kwargs):
         super().__init__(val, base64.b64encode)
 
 
 class ByteArrayToAscii85(ByteArrayToBaseEncoded):
-    def __init__(self, val):
+    def __init__(self, val, *args, **kwargs):
         super().__init__(val, base64.a85encode)
