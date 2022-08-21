@@ -7,15 +7,18 @@ from commands.basecog import BaseCog
 from conversions.decode.BinaryToByteArray import BinaryToByteArray
 from conversions.decode.HexToByteArray import HexToByteArray
 from conversions.decode.TextToByteArray import TextToByteArray
+from conversions.decode.baseencoded import *
 from conversions.decode.caesar import CaesarCipherToByteArray
 from conversions.encode.ByteArrayToBinary import ByteArrayToBinary
 from conversions.encode.ByteArrayToHex import ByteArrayToHex
 from conversions.encode.ByteArrayToText import ByteArrayToText
+from conversions.encode.baseencoded import *
 from conversions.encode.caesar import ByteArrayToCaesarCipher
+from conversions.encode.hashing import *
 from exceptions import InvalidExpressionException, InputInvalidException, InputTooLongException, EncodeDecodeError
+from functions.general import autocomplete_list
 from ui.params_modals import ParamsModal
 from ui.safeembed import SafeEmbed
-from functions.general import autocomplete_list
 
 INPUT_FORMATS = {
     "binary": BinaryToByteArray,
