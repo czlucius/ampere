@@ -1,6 +1,6 @@
 import discord
 
-from main.modals.params_info import ParamsInfo
+from main.ui.params_info import ParamsInfo
 from main.models.safeembed import SafeEmbed
 
 
