@@ -11,6 +11,7 @@ py-expression-eval = "^0.3.14"
 base58 = "^2.1.1"
 pybase62 = "^0.5.0"
 base45 = "^0.4.3"
+pycryptodome = "^3.15.0"
 
 [tool.poetry.dev-dependencies]
 
