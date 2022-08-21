@@ -3,9 +3,9 @@ import os
 
 import discord
 
-from main.commands.math import Math
-from main.commands.misc import Misc
-from main.commands.utils import Utils
+from commands.math import Math
+from commands.misc import Misc
+from commands.utils import Utils
 
 try:
     # Easier to test locally

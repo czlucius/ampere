@@ -3,8 +3,8 @@ from typing import Callable
 
 import discord
 
-from main.exceptions import InputTooLongException
-from main.functions.general import escape_from_md
+from exceptions import InputTooLongException
+from functions.general import escape_from_md
 
 
 def dummy_escape(content):

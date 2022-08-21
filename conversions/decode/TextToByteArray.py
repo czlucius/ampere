@@ -1,4 +1,4 @@
-from main.conversions import XToY
+from conversions import XToY
 
 
 class TextToByteArray(XToY):

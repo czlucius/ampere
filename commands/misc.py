@@ -2,11 +2,11 @@ import logging
 import discord
 import json
 
-from main.commands.basecog import BaseCog
+from commands.basecog import BaseCog
 from discord.ext import commands
 
-from main.ui.safeembed import SafeEmbed
-from main.functions.general import get_latency_ms
+from ui.safeembed import SafeEmbed
+from functions.general import get_latency_ms
 
 SOURCE_URL = "https://github.com/czlucius/ampere"
 LICENSE = "GNU AGPL v3.0 License"

@@ -1,12 +1,12 @@
 from discord.ext import commands
 from py_expression_eval import Parser
 
-from main.commands.basecog import BaseCog
-from main.exceptions import InvalidExpressionException, InputTooLongException
-from main.ui.safeembed import SafeEmbed
+from commands.basecog import BaseCog
+from exceptions import InvalidExpressionException, InputTooLongException
+from ui.safeembed import SafeEmbed
 
-from main.functions.general import *
-from main.functions.timeout import tle_exit_gracefully
+from functions.general import *
+from functions.timeout import tle_exit_gracefully
 
 CONSTANTS_VALS = {"π": 3.14159265358979323846264338327950288, "e": 2.71828182845904523536028747135266249,
                   "ϕ": 1.61803398874989484820458683436563811, "Ω": 0.56714329040978387299996866221035554}

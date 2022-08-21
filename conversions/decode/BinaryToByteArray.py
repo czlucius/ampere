@@ -1,10 +1,8 @@
 import re
-import string
-from abc import ABC
 
-from main.conversions import XToY
-from main.exceptions import InvalidExpressionException
-from main.functions.base import bitstring_to_bytes
+from conversions import XToY
+from exceptions import InvalidExpressionException
+from functions.base import bitstring_to_bytes
 
 
 class BinaryToByteArray(XToY):

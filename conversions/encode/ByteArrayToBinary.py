@@ -1,4 +1,4 @@
-from main.conversions.encode.ByteArrayToNumericBase import ByteArrayToNumericBase
+from conversions.encode.ByteArrayToNumericBase import ByteArrayToNumericBase
 
 
 class ByteArrayToBinary(ByteArrayToNumericBase):

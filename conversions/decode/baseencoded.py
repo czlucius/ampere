@@ -3,13 +3,13 @@ import logging
 import binascii
 
 from typing import Callable
-from main.conversions import XToY
-from main.exceptions import EncodeDecodeError
+from conversions import XToY
+from exceptions import EncodeDecodeError
 
 
-class ByteArrayToBaseEncoded(XToY):
+class BaseEncodedToByteArray(XToY):
     def __init__(self, val, function: Callable, *args, **kwargs):
-        super().__init__(val)
+        super().__init__(val, *args, **kwargs)
 
         def fn(*args, **kwargs):
             try:
@@ -22,36 +22,36 @@ class ByteArrayToBaseEncoded(XToY):
 
     def transform(self):
         val = self.val.strip()
-        return self.function(val).decode("utf-8")
+        return self.function(val)
 
     def get_type(self) -> int:
-        return self.TO_UNICODE
+        return self.FROM_UNICODE
 
 
-class ByteArrayToBase32(ByteArrayToBaseEncoded):
+class Base32ToByteArray(BaseEncodedToByteArray):
     def __init__(self, val, *args, **kwargs):
-        super().__init__(val, base64.b32encode)
+        super().__init__(val, base64.b32decode)
 
-class ByteArrayToBase45(ByteArrayToBaseEncoded):
+class Base45ToByteArray(BaseEncodedToByteArray):
     def __init__(self, val, *args, **kwargs):
-        super().__init__(val, base45.b45encode)
+        super().__init__(val, base45.b45decode)
 
 
-class ByteArrayToBase58(ByteArrayToBaseEncoded):
+class Base58ToByteArray(BaseEncodedToByteArray):
     def __init__(self, val, *args, **kwargs):
-        super().__init__(val, base58.b58encode)
+        super().__init__(val, base58.b58decode)
 
 
-class ByteArrayToBase62(ByteArrayToBaseEncoded):
+class Base62ToByteArray(BaseEncodedToByteArray):
     def __init__(self, val, *args, **kwargs):
-        super().__init__(val, lambda barr: bytes(base62.encodebytes(barr), encoding="utf-8"))
+        super().__init__(val, base62.decodebytes)
 
 
-class ByteArrayToBase64(ByteArrayToBaseEncoded):
+class Base64ToByteArray(BaseEncodedToByteArray):
     def __init__(self, val, *args, **kwargs):
-        super().__init__(val, base64.b64encode)
+        super().__init__(val, base64.b64decode)
 
 
-class ByteArrayToAscii85(ByteArrayToBaseEncoded):
+class Ascii85ToByteArray(BaseEncodedToByteArray):
     def __init__(self, val, *args, **kwargs):
-        super().__init__(val, base64.a85encode)
+        super().__init__(val, base64.a85decode)

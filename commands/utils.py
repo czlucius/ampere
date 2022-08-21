@@ -3,22 +3,19 @@ import random
 import discord
 from discord.ext import commands
 
-from main.commands.basecog import BaseCog
-from main.conversions.decode.BinaryToByteArray import BinaryToByteArray
-from main.conversions.decode.HexToByteArray import HexToByteArray
-from main.conversions.decode.TextToByteArray import TextToByteArray
-from main.conversions.decode.baseencoded import *
-from main.conversions.decode.caesar import CaesarCipherToByteArray
-from main.conversions.encode.ByteArrayToBinary import ByteArrayToBinary
-from main.conversions.encode.ByteArrayToHex import ByteArrayToHex
-from main.conversions.encode.ByteArrayToText import ByteArrayToText
-from main.conversions.encode.baseencoded import *
-from main.conversions.encode.caesar import ByteArrayToCaesarCipher
-from main.conversions.encode.hashing import *
-from main.exceptions import InvalidExpressionException, InputInvalidException, InputTooLongException, EncodeDecodeError
-from main.ui.params_modals import ParamsModal
-from main.ui.safeembed import SafeEmbed
-from main.functions.general import autocomplete_list
+from commands.basecog import BaseCog
+from conversions.decode.BinaryToByteArray import BinaryToByteArray
+from conversions.decode.HexToByteArray import HexToByteArray
+from conversions.decode.TextToByteArray import TextToByteArray
+from conversions.decode.caesar import CaesarCipherToByteArray
+from conversions.encode.ByteArrayToBinary import ByteArrayToBinary
+from conversions.encode.ByteArrayToHex import ByteArrayToHex
+from conversions.encode.ByteArrayToText import ByteArrayToText
+from conversions.encode.caesar import ByteArrayToCaesarCipher
+from exceptions import InvalidExpressionException, InputInvalidException, InputTooLongException, EncodeDecodeError
+from ui.params_modals import ParamsModal
+from ui.safeembed import SafeEmbed
+from functions.general import autocomplete_list
 
 INPUT_FORMATS = {
     "binary": BinaryToByteArray,

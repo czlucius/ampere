@@ -1,5 +1,5 @@
-from main.conversions import XToY
-from main.functions.base import bytes_to_base_arb
+from conversions import XToY
+from functions.base import bytes_to_base_arb
 
 
 class ByteArrayToNumericBase(XToY):

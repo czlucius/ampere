@@ -3,8 +3,8 @@ from contextlib import contextmanager
 
 import discord
 
-from main.exceptions import TimeoutException
-from main.ui.safeembed import SafeEmbed
+from exceptions import TimeoutException
+from ui.safeembed import SafeEmbed
 
 
 # WARNING: ONLY WORKS ON UNIX SYSTEMS!
