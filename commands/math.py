@@ -2,7 +2,7 @@ from discord.ext import commands
 from py_expression_eval import Parser
 
 from commands.basecog import BaseCog
-from exceptions import InvalidExpressionException, InputTooLongException
+from exceptions import InvalidExpressionException, FieldTooLongError
 from ui.safeembed import SafeEmbed
 
 from functions.general import *
@@ -60,13 +60,13 @@ class Math(BaseCog):
                     embed.safe_add_field(name="Precision", value=str(precision))
 
                 def if_err():
-                    raise InputTooLongException(
+                    raise FieldTooLongError(
                                          "Result too long. Max 1024 characters.")
 
                 embed.safe_add_field(name="Result", value=result, error=True, strip_md=True,
                                      exc_callback=if_err)
 
-        except (InvalidExpressionException, InputTooLongException) as err:
+        except (InvalidExpressionException, FieldTooLongError) as err:
 
             logging.error(f"/calculate error in parsing: {err} - {type(err)}")
             embed = SafeEmbed(

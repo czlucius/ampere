@@ -15,7 +15,7 @@ from conversions.encode.ByteArrayToText import ByteArrayToText
 from conversions.encode.baseencoded import *
 from conversions.encode.caesar import ByteArrayToCaesarCipher
 from conversions.encode.hashing import *
-from exceptions import InvalidExpressionException, InputInvalidException, InputTooLongException, EncodeDecodeError
+from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
 from functions.general import autocomplete_list
 from ui.params_modals import ParamsModal
 from ui.safeembed import SafeEmbed
@@ -138,13 +138,13 @@ class Utils(BaseCog):
                     color=discord.Colour.blue()
                 )
                 embed.safe_add_field(name="Input", value=x, strip_md=True)
-                embed.safe_add_field(name="Output", value=y, strip_md=True, error=True, exc_callback=lambda: InputTooLongException(
+                embed.safe_add_field(name="Output", value=y, strip_md=True, error=True, exc_callback=lambda: FieldTooLongError(
                                             "Output too long. Max 1024 characters."))
 
                 embed.safe_add_field(name="Input format", value=x_format)
                 embed.safe_add_field(name="Output format", value=y_format)
 
-            except (InputInvalidException, InvalidExpressionException, InputTooLongException, EncodeDecodeError) as err:
+            except (InputInvalidException, InvalidExpressionException, FieldTooLongError, EncodeDecodeError) as err:
                 errstr = str(err) if str(err).strip() != "" else "An error occurred."
                 logging.error(f"/x2y error: {errstr} - {type(err)}")
                 embed = SafeEmbed(
