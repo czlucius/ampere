@@ -1,4 +1,3 @@
-import logging
 import random
 
 import discord
@@ -15,9 +14,10 @@ from main.conversions.encode.ByteArrayToHex import ByteArrayToHex
 from main.conversions.encode.ByteArrayToText import ByteArrayToText
 from main.conversions.encode.baseencoded import *
 from main.conversions.encode.caesar import ByteArrayToCaesarCipher
+from main.conversions.encode.hashing import *
 from main.exceptions import InvalidExpressionException, InputInvalidException, InputTooLongException, EncodeDecodeError
-from main.modals.params_modals import ParamsModal
-from main.models.safeembed import SafeEmbed
+from main.ui.params_modals import ParamsModal
+from main.ui.safeembed import SafeEmbed
 from main.functions.general import autocomplete_list
 
 INPUT_FORMATS = {
@@ -44,7 +44,11 @@ OUTPUT_FORMATS = {
     "base62": ByteArrayToBase62,
     "base64": ByteArrayToBase64,
     "ascii85": ByteArrayToAscii85,
-    "caesar-cipher": ByteArrayToCaesarCipher
+    "caesar-cipher": ByteArrayToCaesarCipher,
+    "sha256": ByteArrayToSHA256,
+    "md5": ByteArrayToMD5,
+    "sha1": ByteArrayToSHA1,
+    "sha512": ByteArrayToSHA512
 }
 
 async def input_format_autocomplete(ctx: discord.AutocompleteContext):

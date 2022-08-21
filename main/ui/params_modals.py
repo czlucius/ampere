@@ -1,7 +1,7 @@
 import discord
 
 from main.ui.params_info import ParamsInfo
-from main.models.safeembed import SafeEmbed
+from main.ui.safeembed import SafeEmbed
 
 
 class ParamsModal(discord.ui.Modal):

@@ -1,11 +1,9 @@
-import logging
-
 from discord.ext import commands
 from py_expression_eval import Parser
 
 from main.commands.basecog import BaseCog
 from main.exceptions import InvalidExpressionException, InputTooLongException
-from main.models.safeembed import SafeEmbed
+from main.ui.safeembed import SafeEmbed
 
 from main.functions.general import *
 from main.functions.timeout import tle_exit_gracefully

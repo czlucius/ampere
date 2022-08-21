@@ -5,7 +5,7 @@ import json
 from main.commands.basecog import BaseCog
 from discord.ext import commands
 
-from main.models.safeembed import SafeEmbed
+from main.ui.safeembed import SafeEmbed
 from main.functions.general import get_latency_ms
 
 SOURCE_URL = "https://github.com/czlucius/ampere"

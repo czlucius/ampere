@@ -3,7 +3,7 @@ from typing import Optional
 
 from main.conversions import XToY
 from main.exceptions import InvalidParametersException, InputInvalidException
-from main.modals.params_info import ParamsInfo
+from main.ui.params_info import ParamsInfo
 
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

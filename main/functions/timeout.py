@@ -4,7 +4,7 @@ from contextlib import contextmanager
 import discord
 
 from main.exceptions import TimeoutException
-from main.models.safeembed import SafeEmbed
+from main.ui.safeembed import SafeEmbed
 
 
 # WARNING: ONLY WORKS ON UNIX SYSTEMS!
