@@ -38,7 +38,7 @@ class Misc(BaseCog):
             color=discord.Colour.orange()
         )
 
-        with open("bot_oss.json", "r") as raw:
+        with open("oss_libs.json", "r") as raw:
             raw_text = raw.read()
             info = json.loads(raw_text)
             for lib in info:
