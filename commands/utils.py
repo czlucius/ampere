@@ -138,8 +138,10 @@ class Utils(BaseCog):
                     color=discord.Colour.blue()
                 )
                 embed.safe_add_field(name="Input", value=x, strip_md=True)
-                embed.safe_add_field(name="Output", value=y, strip_md=True, error=True, exc_callback=lambda: FieldTooLongError(
-                                            "Output too long. Max 1024 characters."))
+                def output_too_long_err():
+                    raise FieldTooLongError(
+                        "Output too long. Max 1024 characters.")
+                embed.safe_add_field(name="Output", value=y, strip_md=True, error=True, exc_callback=output_too_long_err)
 
                 embed.safe_add_field(name="Input format", value=x_format)
                 embed.safe_add_field(name="Output format", value=y_format)
