@@ -5,14 +5,9 @@ import json
 from commands.basecog import BaseCog
 from discord.ext import commands
 
+from functions.io import json_open
 from ui.safeembed import SafeEmbed
 from functions.general import get_latency_ms
-
-SOURCE_URL = "https://github.com/czlucius/ampere"
-LICENSE = "GNU AGPL v3.0 License"
-LICENSE_URL = "https://www.gnu.org/licenses/agpl-3.0-standalone.html"  # TODO please change this
-COPYRIGHT_NOTICE = "Copyright (c) 2022 Lucius (lcz5#3392)"
-
 
 class Misc(BaseCog):
 
@@ -38,9 +33,7 @@ class Misc(BaseCog):
             color=discord.Colour.orange()
         )
 
-        with open("oss_libs.json", "r") as raw:
-            raw_text = raw.read()
-            info = json.loads(raw_text)
+        with json_open("oss_libs.json", "r") as info:
             for lib in info:
                 embed.safe_add_field(
                     lib["name"],
@@ -61,8 +54,14 @@ class Misc(BaseCog):
                     lib["copyright-notice"],
                     True
                 )
-        embed.safe_add_field(
-            "Ampere source and license",
-            f"Licensed under {LICENSE} - {LICENSE_URL}\n{COPYRIGHT_NOTICE}\n{SOURCE_URL}"
-        )
+
+        with json_open("bot_oss.json", "r") as oss_json:
+            license = oss_json["license"]
+            source = oss_json["source"]
+            license_url = oss_json["license_url"]
+            copyright_notice = oss_json["copyright_notice"]
+            embed.safe_add_field(
+                "Ampere source and license",
+                f"Licensed under {license} - {license_url}\n{copyright_notice}\n{source}"
+            )
         await ctx.respond(embed=embed)
