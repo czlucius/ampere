@@ -12,6 +12,7 @@ base58 = "^2.1.1"
 pybase62 = "^0.5.0"
 base45 = "^0.4.3"
 pycryptodome = "^3.15.0"
+aiopyston = "^1.2.1"
 
 [tool.poetry.dev-dependencies]
 
