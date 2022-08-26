@@ -15,3 +15,6 @@ class EncodeDecodeError(Exception):
 
 class InvalidParametersException(InputInvalidException):
     pass
+
+class CipherError(Exception):
+    pass

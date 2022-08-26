@@ -14,7 +14,9 @@ from conversions.encode.ByteArrayToHex import ByteArrayToHex
 from conversions.encode.ByteArrayToText import ByteArrayToText
 from conversions.encode.baseencoded import *
 from conversions.encode.caesar import ByteArrayToCaesarCipher
+from conversions.encode.cipher import *
 from conversions.encode.hashing import *
+from conversions.decode.cipher import *
 from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
 from functions.general import autocomplete_list
 from ui.params_modals import ParamsModal
@@ -30,7 +32,10 @@ INPUT_FORMATS = {
     "base62": Base62ToByteArray,
     "base64": Base64ToByteArray,
     "ascii85": Ascii85ToByteArray,
-    "caesar-cipher": CaesarCipherToByteArray
+    "caesar-cipher": CaesarCipherToByteArray,
+    "aes-ecb-base64": AESECBToByteArray,
+    "des-ecb-base64": DESECBToByteArray,
+    "3des-ecb-base64": DESECBToByteArray
 }
 
 
@@ -48,7 +53,10 @@ OUTPUT_FORMATS = {
     "sha256": ByteArrayToSHA256,
     "md5": ByteArrayToMD5,
     "sha1": ByteArrayToSHA1,
-    "sha512": ByteArrayToSHA512
+    "sha512": ByteArrayToSHA512,
+    "aes-ecb-base64": ByteArrayToAESECB,
+    "des-ecb-base64": ByteArrayToDESECB,
+    "3des-ecb-base64": ByteArrayToDES3ECB
 }
 
 async def input_format_autocomplete(ctx: discord.AutocompleteContext):
@@ -146,7 +154,7 @@ class Utils(BaseCog):
                 embed.safe_add_field(name="Input format", value=x_format)
                 embed.safe_add_field(name="Output format", value=y_format)
 
-            except (InputInvalidException, InvalidExpressionException, FieldTooLongError, EncodeDecodeError) as err:
+            except (InputInvalidException, InvalidExpressionException, FieldTooLongError, EncodeDecodeError, CipherError) as err:
                 errstr = str(err) if str(err).strip() != "" else "An error occurred."
                 logging.error(f"/x2y error: {errstr} - {type(err)}")
                 embed = SafeEmbed(
