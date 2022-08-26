@@ -1,6 +1,6 @@
 import re
 
-from conversions import XToY
+from components.conversions import XToY
 from exceptions import InvalidExpressionException
 from functions.base import bitstring_to_bytes
 

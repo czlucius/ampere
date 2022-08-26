@@ -4,19 +4,19 @@ import discord
 from discord.ext import commands
 
 from commands.basecog import BaseCog
-from conversions.decode.BinaryToByteArray import BinaryToByteArray
-from conversions.decode.HexToByteArray import HexToByteArray
-from conversions.decode.TextToByteArray import TextToByteArray
-from conversions.decode.baseencoded import *
-from conversions.decode.caesar import CaesarCipherToByteArray
-from conversions.encode.ByteArrayToBinary import ByteArrayToBinary
-from conversions.encode.ByteArrayToHex import ByteArrayToHex
-from conversions.encode.ByteArrayToText import ByteArrayToText
-from conversions.encode.baseencoded import *
-from conversions.encode.caesar import ByteArrayToCaesarCipher
-from conversions.encode.cipher import *
-from conversions.encode.hashing import *
-from conversions.decode.cipher import *
+from components.conversions import BinaryToByteArray
+from components.conversions import HexToByteArray
+from components.conversions.decode.TextToByteArray import TextToByteArray
+from components.conversions import *
+from components.conversions.decode.caesar import CaesarCipherToByteArray
+from components.conversions import ByteArrayToBinary
+from components.conversions import ByteArrayToHex
+from components.conversions.encode.ByteArrayToText import ByteArrayToText
+from components.conversions.encode.baseencoded import *
+from components.conversions import ByteArrayToCaesarCipher
+from components.conversions import *
+from components.conversions.encode.hashing import *
+from components.conversions.decode.cipher import *
 from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
 from functions.general import autocomplete_list
 from ui.params_modals import ParamsModal

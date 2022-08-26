@@ -1,6 +1,6 @@
 import re
 
-from conversions import XToY
+from components.conversions import XToY
 from exceptions import InvalidExpressionException
 from functions.base import base_arb_to_bytes
 

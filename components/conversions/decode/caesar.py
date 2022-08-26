@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from conversions import XToY
+from components.conversions import XToY
 from exceptions import InvalidParametersException
 from ui.params_info import ParamsInfo
 

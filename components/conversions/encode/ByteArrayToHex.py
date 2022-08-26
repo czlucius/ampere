@@ -1,4 +1,4 @@
-from conversions.encode.ByteArrayToNumericBase import ByteArrayToNumericBase
+from components.conversions.encode.ByteArrayToNumericBase import ByteArrayToNumericBase
 
 
 class ByteArrayToHex(ByteArrayToNumericBase):

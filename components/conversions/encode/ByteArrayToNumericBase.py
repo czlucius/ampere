@@ -1,4 +1,4 @@
-from conversions import XToY
+from components.conversions import XToY
 from functions.base import bytes_to_base_arb
 
 

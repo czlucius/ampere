@@ -1,4 +1,4 @@
-from conversions.decode.NumericBaseToByteArray import NumericBaseToByteArray
+from components.conversions.decode.NumericBaseToByteArray import NumericBaseToByteArray
 
 
 class HexToByteArray(NumericBaseToByteArray):

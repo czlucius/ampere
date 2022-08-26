@@ -3,14 +3,14 @@ import binascii
 from typing import Optional, Callable
 
 from Crypto.Cipher import AES, DES, DES3
-from conversions import XToY
+from components.conversions import XToY
 from exceptions import CipherError, EncodeDecodeError
 from ui.params_info import ParamsInfo
 
-
-class GenericCipherToByteArray(XToY):
+# TODO work needs to be done for padding for AES ECB encryption.
+class ByteArrayToGenericCipher(XToY):
     def __init__(self, val, cipher_creation_callback: Callable, parameters=""):
-        super().__init__(val, parameters, self.FROM_UNICODE)
+        super().__init__(val, parameters, self.TO_UNICODE)
         key = bytes(parameters, encoding="utf-8")
         try:
             self.cipher_obj = cipher_creation_callback(key)
@@ -18,15 +18,21 @@ class GenericCipherToByteArray(XToY):
             raise CipherError(str(err))
 
     def transform(self):
+        # try:
+        #     ct = base64.b64decode(self.val)
+        # except (binascii.Error, ValueError) as err:
+        #     raise EncodeDecodeError(str(err))
+        plaintext = self.val
         try:
-            ct = base64.b64decode(self.val)
-        except (binascii.Error, ValueError) as err:
-            raise EncodeDecodeError(str(err))
-        try:
-            plaintext = bytes(self.cipher_obj.decrypt(ct))
+            ct = self.cipher_obj.encrypt(plaintext)
         except ValueError as err:
             raise CipherError(str(err))  # the built-in error messages look presentable to show on Discord.
-        return plaintext
+        try:
+            formatted_ct = base64.b64encode(ct)
+        except (ValueError, binascii.Error) as err:
+            raise EncodeDecodeError(str(err))
+
+        return formatted_ct.decode("utf-8")
 
     @staticmethod
     def uses_params():
@@ -37,16 +43,16 @@ class GenericCipherToByteArray(XToY):
         return ParamsInfo("Key")  # TODO: add option to add IV in the future.
 
 
-class AESECBToByteArray(GenericCipherToByteArray):
+class ByteArrayToAESECB(ByteArrayToGenericCipher):
     def __init__(self, val, parameters=""):
         super().__init__(val, lambda key: AES.new(key, AES.MODE_ECB), parameters)
 
 
-class DESECBToByteArray(GenericCipherToByteArray):
+class ByteArrayToDESECB(ByteArrayToGenericCipher):
     def __init__(self, val, parameters=""):
         super().__init__(val, lambda key: DES.new(key, DES.MODE_ECB), parameters)
 
 
-class DES3ECBToByteArray(GenericCipherToByteArray):
+class ByteArrayToDES3ECB(ByteArrayToGenericCipher):
     def __init__(self, val, parameters=""):
         super().__init__(val, lambda key: DES3.new(key, DES.MODE_ECB), parameters)

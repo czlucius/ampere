@@ -1,4 +1,4 @@
-from conversions import XToY
+from components.conversions import XToY
 
 
 class ByteArrayToText(XToY):
