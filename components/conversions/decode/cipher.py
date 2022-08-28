@@ -5,7 +5,7 @@ from typing import Optional, Callable
 from Crypto.Cipher import AES, DES, DES3
 from components.conversions import XToY
 from exceptions import CipherError, EncodeDecodeError
-from ui.params_info import ParamsInfo
+from models.params_info import ParamsInfo
 
 
 class GenericCipherToByteArray(XToY):

@@ -3,7 +3,7 @@ from typing import Optional
 
 from components.conversions import XToY
 from exceptions import InvalidParametersException
-from ui.params_info import ParamsInfo
+from models.params_info import ParamsInfo
 
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

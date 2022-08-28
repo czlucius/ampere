@@ -1,7 +1,7 @@
 import abc
 from typing import Optional
 
-from ui.params_info import ParamsInfo
+from models.params_info import ParamsInfo
 
 
 class XToY(abc.ABC):
