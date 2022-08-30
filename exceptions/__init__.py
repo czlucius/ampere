@@ -18,3 +18,6 @@ class InvalidParametersException(InputInvalidException):
 
 class CipherError(Exception):
     pass
+
+class CodeRunnerException(Exception):
+    pass

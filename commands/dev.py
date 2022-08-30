@@ -1,24 +1,29 @@
-import random
+import asyncio
 
 import discord
+import sys
+
 from discord.ext import commands
+from pyston.exceptions import *
+from typing import Set
 
 from commands.basecog import BaseCog
-from components.conversions import BinaryToByteArray
-from components.conversions import HexToByteArray
+from components.conversions.decode.BinaryToByteArray import BinaryToByteArray
+from components.conversions.decode.HexToByteArray import HexToByteArray
 from components.conversions.decode.TextToByteArray import TextToByteArray
-from components.conversions import *
+from components.conversions.decode.baseencoded import *
 from components.conversions.decode.caesar import CaesarCipherToByteArray
-from components.conversions import ByteArrayToBinary
-from components.conversions import ByteArrayToHex
+from components.conversions.encode.ByteArrayToBinary import ByteArrayToBinary
+from components.conversions.encode.ByteArrayToHex import ByteArrayToHex
 from components.conversions.encode.ByteArrayToText import ByteArrayToText
 from components.conversions.encode.baseencoded import *
-from components.conversions import ByteArrayToCaesarCipher
-from components.conversions import *
+from components.conversions.encode.caesar import ByteArrayToCaesarCipher
+from components.conversions.encode.cipher import *
 from components.conversions.encode.hashing import *
 from components.conversions.decode.cipher import *
+from components.run.coderunner import PistonCodeRunner
 from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
-from functions.general import autocomplete_list
+from functions.general import autocomplete_list, wrap_in_codeblocks
 from ui.params_modals import ParamsModal
 from ui.safeembed import SafeEmbed
 
@@ -65,10 +70,23 @@ async def input_format_autocomplete(ctx: discord.AutocompleteContext):
 async def output_format_autocomplete(ctx: discord.AutocompleteContext):
     return await autocomplete_list(ctx, OUTPUT_FORMATS.keys())
 
+def produce_cr_autocomplete(langs_available: Set[str]):
+    # bflang is not appropriate to be shown in channels, especially where content is not age restricted.
+    # Running of bflang is still supported, but the language name would not be shown.
+    # Encoded in base64 so that programmers need not see the lang name too.
+    langs_available.discard(base64.b64decode("QnJhaW5mdWNr").decode("utf-8"))
+    async def cr_autocomplete(ctx: discord.AutocompleteContext):
+        return await autocomplete_list(ctx, langs_available)
+    return cr_autocomplete
+
 class Utils(BaseCog):
+    cr_langs = set()
     def __init__(self, bot):
         self.bot = bot
-        # Initialise the docker container for translation.
+        self.code_runner = PistonCodeRunner()
+        loop = asyncio.get_event_loop()
+
+        self.cr_langs = loop.run_until_complete(self.code_runner.get_lang_names())
 
 
     @commands.slash_command(name="x2y", description="Convert from X to Y")
@@ -121,7 +139,7 @@ class Utils(BaseCog):
                 embed.safe_add_field(name="Input", value=x, strip_md=True)
                 embed.safe_add_field(name="Input format", value=x_format)
                 embed.safe_add_field(name="Output format", value=y_format)
-            
+
             return embed
         x_class = INPUT_FORMATS[x_format]
         y_class = OUTPUT_FORMATS[y_format]
@@ -133,3 +151,58 @@ class Utils(BaseCog):
         else:
             embed = conversion_present_embed()
             await ctx.respond(embed=embed)
+
+
+    @commands.slash_command(name="run", description="Run code in any language")
+    @discord.option("code", description="Contents of program")
+    @discord.option("lang", description="Language of program", autocomplete=produce_cr_autocomplete(cr_langs))
+    @discord.option("stdin", description="Standard input", required=False)
+    @discord.option("args", description="Arguments to supply to program (e.g. in sys.argv)", required=False)
+    async def run(self, ctx: discord.ApplicationContext, code, lang, stdin, args):
+        runner = self.code_runner
+        error_msg = None
+        out = None
+        try:
+            out = await runner.run(lang, code, stdin, args)
+        except TooManyRequests:
+            error_msg = "Bot has exceeded its rate limit. Please try again shortly."
+        except InvalidLanguage:
+            error_msg = f"No such language: {lang}"
+        except InternalServerError:
+            error_msg = "Internal server error occurred."
+        except ExecutionError as err:
+            error_msg = f"Execution error: {err}"
+        except UnexpectedError as err:
+            error_msg = f"An unexpected error has occurred: {err}"
+        ex_type, ex_value, traceback = sys.exc_info()
+        if not error_msg:
+            output = out.output
+            exit_code = out.exit_code
+            # original code, exit status, lang
+
+            embed = SafeEmbed(
+                title="Program result",
+                description=wrap_in_codeblocks(output), # May trigger an error if >1024 chars!
+                colour=discord.Colour.teal()
+            )
+            embed.safe_add_field(
+                "Supplied program",
+                wrap_in_codeblocks(code)
+            )
+            embed.safe_add_field(
+                "Exit code",
+                exit_code
+            )
+            embed.safe_add_field(
+                "Language",
+                lang
+            )
+
+        else:
+            embed = SafeEmbed(
+                title="Error!",
+                description=error_msg
+            )
+            logging.error(f"/run: error occurred: {ex_value}")
+
+        await ctx.respond(embed=embed)

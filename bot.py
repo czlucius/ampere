@@ -5,7 +5,7 @@ import discord
 
 from commands.math import Math
 from commands.misc import Misc
-from commands.utils import Utils
+from commands.dev import Utils
 
 try:
     # Easier to test locally
