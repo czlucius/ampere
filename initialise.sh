@@ -12,4 +12,4 @@ poetry update
 # (Instruction 2)
 # Start the bot through Poetry. Note that this call is blocking, do not place anything after it, unless it is intended to run after
 # the bot has finished operation.
-(sudo docker run --platform=linux/amd64 -it --restart=unless-stopped -p 5001:5001 libretranslate/libretranslate --disable-web-ui) & (poetry run python3 bot.py) && fg
+poetry run python3 bot.py & (sudo docker run --platform=linux/amd64 -it --restart=unless-stopped -p 5001:5001 libretranslate/libretranslate --disable-web-ui) && fg
