@@ -8,7 +8,6 @@ from commands.misc import Misc
 from commands.dev import Utils
 
 try:
-    # Easier to test locally
     with open("token.secret", "r") as envfile:
         TOKEN = envfile.read()
 except FileNotFoundError:
