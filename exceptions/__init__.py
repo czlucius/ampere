@@ -21,3 +21,6 @@ class CipherError(Exception):
 
 class CodeRunnerException(Exception):
     pass
+
+class InvalidOptionException(Exception):
+    pass
