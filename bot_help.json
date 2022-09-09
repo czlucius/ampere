@@ -1,0 +1,26 @@
+{
+  "command_categories": {
+    "Dev 🧑‍💻": {
+      "**conv**": "Convert from one form to another. (e.g. 'Hello World' -(text>base64)-> 'SGVsbG8gV29ybGQ=)'",
+      "**run**": "Run code in different programming languages",
+      "**py_with_libs**": "Run Python 3 code with libraries from PyPI. Supply the library name like how you use pip."
+    },
+    "Math \uD83E\uDDEE": {
+      "**calculate**": "Supply a mathematical expression to be evaluated, with an optional precision.",
+      "**constants**": "Get values of well-known constants (e.g. π)."
+    },
+    "Rand *️⃣": {
+      "**rng**": "Generate a random number between the lower bound and the upper bound(exclusive)."
+    },
+    "Misc \uD83C\uDFA8": {
+      "**translate**": "Translate text from one language to another. Powered by LibreTranslate.",
+      "**ping**": "Ping the bot, and get the bot's latency.",
+      "**oss**": "Get a list of open-source libraries used, their licenses, and their source URLs.",
+      "**help**": "This help message."
+    }
+  },
+  "about": {
+    "name": "**Ampere**",
+    "description": "A multi-purpose Discord bot"
+  }
+}

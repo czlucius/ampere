@@ -52,6 +52,7 @@ class Misc(BaseCog):
             embed.safe_add_field("Original text", text)
             embed.safe_add_field("From", source)
             embed.safe_add_field("To", dest)
+            embed.set_footer(text="Powered by LibreTranslate")
         except InvalidOptionException as err:
             embed = SafeEmbed(
                 title="Error!",
@@ -122,4 +123,35 @@ class Misc(BaseCog):
                 "Ampere source and license",
                 f"Licensed under {license} - {license_url}\n{copyright_notice}\n{source}"
             )
+        await ctx.respond(embed=embed)
+
+    @commands.slash_command(name="help", description="Displays a list of commands for Ampere")
+    async def help(self, ctx: discord.ApplicationContext):
+
+        with json_open("bot_help.json", "r") as help_data:
+            about = help_data["about"]
+            embed = SafeEmbed(
+                title=about["name"],
+                description=about["description"]
+            )
+            command_categories = help_data["command_categories"]
+            for item in command_categories.items():
+                category = item[0]
+                cat_commands = item[1]
+                desc = ""
+                for item2 in cat_commands.items():
+                    desc += f"{item2[0]}: {item2[1]}\n"
+
+                embed.safe_add_field(
+                    category,
+                    desc
+                )
+
+            embed.safe_add_field(
+                "Invite link",
+                "https://gg.gg/1261z8"
+            )
+
+            embed.safe_add_field("Source", "https://github.com/czlucius/ampere")
+
         await ctx.respond(embed=embed)
