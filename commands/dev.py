@@ -252,7 +252,7 @@ with open("{filename}", "wb") as file:
 os.mkdir("pkg-dir")
 cwd = os.getcwd()
 pkg_dir = os.path.join(cwd, "pkg-dir")
-subprocess.run(["python3", "-m", "pip", "install", "--target=" + pkg_dir,  "{filename}"], stdout=subprocess.DEVNULL)
+subprocess.run(["python3", "-m", "pip", "install", "--target=" + pkg_dir,  "{filename}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 sys.path.append(pkg_dir)
 
 """
