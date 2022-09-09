@@ -5,15 +5,15 @@ import discord
 
 from commands.math import Math
 from commands.misc import Misc
-from commands.dev import Utils
+from commands.dev import Dev
+from commands.rand import Rand
 
-try:
-    with open("token.secret", "r") as envfile:
-        TOKEN = envfile.read()
-except FileNotFoundError:
-    TOKEN = os.getenv("TOKEN")
+from dotenv import load_dotenv
 
-cogs = [Math, Misc, Utils]
+load_dotenv("secret.env")
+TOKEN = os.getenv("TOKEN")
+
+cogs = [Math, Misc, Dev, Rand]
 bot = discord.Bot()
 
 logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - [%(levelname)s] - %(message)s')
