@@ -26,4 +26,4 @@ Commands:
 - Rand - rng
 - Misc - translate, ping, oss, help
 
-This bot is compatible with slash commands.
+This bot is uses slash commands.
