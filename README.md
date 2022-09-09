@@ -10,8 +10,8 @@ Bot will be added to Top.gg and other sites soon.
 ## Features/Commands
 
 Features:
-- Run code from multiple programming languages
-- Run Python code with **libraries from PyPI**
+- Run code from multiple programming languages (via [Piston](https://github.com/engineer-man/piston))
+- Run Python code with **libraries from PyPI** (also via Piston)
 - Calculate supplied mathematical expressions
 - Generate random numbers in supplied range
 - Translate between languages
