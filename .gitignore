@@ -1,6 +1,7 @@
 discord.log
 .idea
 token.secret
+secret.env
 
 ## For Poetry ##
 
