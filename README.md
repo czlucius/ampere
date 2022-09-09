@@ -7,6 +7,9 @@ General invite link: https://discord.com/api/oauth2/authorize?client_id=97940712
 
 Bot will be added to Top.gg and other sites soon.
 
+## Screenshots
+<img src="https://user-images.githubusercontent.com/58442255/189299429-c1b57f62-71da-4466-b104-db9a00734100.png" height="550"></img>
+
 ## Features/Commands
 
 Features:
