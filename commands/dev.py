@@ -1,9 +1,11 @@
 import asyncio
+import logging
 
 import discord
 import sys
 
 from discord.ext import commands
+from pyston import File
 from pyston.exceptions import *
 from typing import Set
 
@@ -22,6 +24,7 @@ from components.conversions.encode.cipher import *
 from components.conversions.encode.hashing import *
 from components.conversions.decode.cipher import *
 from components.run.coderunner import PistonCodeRunner
+from components.run.libdl import download_py_whl, NoSuitablePackageException
 from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
 from functions.general import autocomplete_list, wrap_in_codeblocks
 from ui.params_modals import ParamsModal
@@ -64,6 +67,11 @@ OUTPUT_FORMATS = {
     "3des-ecb-base64": ByteArrayToDES3ECB
 }
 
+loop = asyncio.get_event_loop()
+
+cr_langs = loop.run_until_complete(PistonCodeRunner().get_lang_names()) # Just create a dummy code runner object to get langs
+# logging.info(f"Dev - langs are {cr_langs}")
+
 async def input_format_autocomplete(ctx: discord.AutocompleteContext):
     return await autocomplete_list(ctx, INPUT_FORMATS.keys())
 
@@ -71,78 +79,81 @@ async def output_format_autocomplete(ctx: discord.AutocompleteContext):
     return await autocomplete_list(ctx, OUTPUT_FORMATS.keys())
 
 def produce_cr_autocomplete(langs_available: Set[str]):
+
     # bflang is not appropriate to be shown in channels, especially where content is not age restricted.
     # Running of bflang is still supported, but the language name would not be shown.
     # Encoded in base64 so that programmers need not see the lang name too.
-    langs_available.discard(base64.b64decode("QnJhaW5mdWNr").decode("utf-8"))
+    langs_available.discard(base64.b64decode("YnJhaW5mdWNr").decode("utf-8"))
+
+    print(f"produce_cr_autocomplete - langs are {langs_available}")
     async def cr_autocomplete(ctx: discord.AutocompleteContext):
-        return await autocomplete_list(ctx, langs_available)
+        return await autocomplete_list(ctx, list(langs_available))
     return cr_autocomplete
 
-class Utils(BaseCog):
-    cr_langs = set()
+
+class Dev(BaseCog):
+
     def __init__(self, bot):
         self.bot = bot
         self.code_runner = PistonCodeRunner()
-        loop = asyncio.get_event_loop()
-
-        self.cr_langs = loop.run_until_complete(self.code_runner.get_lang_names())
 
 
-    @commands.slash_command(name="x2y", description="Convert from X to Y")
-    @discord.option("x", description="Input value")
-    @discord.option("x_format", description="Format of input", autocomplete=input_format_autocomplete)
-    @discord.option("y_format", description="Format of output", autocomplete=output_format_autocomplete)
-    async def x2y(self, ctx: discord.ApplicationContext, x: str, x_format: str, y_format: str):
-        logging.info(f"/x2y: x={x}, x_format={x_format}, y_format={y_format}")
+
+
+    @commands.slash_command(name="conv", description="Convert from one format to another")
+    @discord.option("i", description="Input value")
+    @discord.option("i_format", description="Format of input", autocomplete=input_format_autocomplete)
+    @discord.option("o_format", description="Format of output", autocomplete=output_format_autocomplete)
+    async def conv(self, ctx: discord.ApplicationContext, i: str, i_format: str, o_format: str):
+        logging.info(f"/conv: x={i}, x_format={i_format}, y_format={o_format}")
         def conversion_present_embed(input_params=None, output_params=None):
-            nonlocal x, x_format, y_format
+            nonlocal i, i_format, o_format
             try:
-                if x_format not in INPUT_FORMATS.keys() or y_format not in OUTPUT_FORMATS.keys():
+                if i_format not in INPUT_FORMATS.keys() or o_format not in OUTPUT_FORMATS.keys():
                     # Invalid format. Abort.
                     raise InputInvalidException("Invalid input/output format")
-                x = x if x.strip() != "" else "Empty"
+                i = i if i.strip() != "" else "Empty"
                 try:
-                    intermediate_bytearray_val = INPUT_FORMATS[x_format](x, parameters=input_params).transform()
-                    logging.info(f"x2y: intermediate={intermediate_bytearray_val}")
-                    y = OUTPUT_FORMATS[y_format](intermediate_bytearray_val, parameters=output_params).transform()
-                    logging.info(f"x2y: y= {y}, type={type(y)}")
+                    intermediate_bytearray_val = INPUT_FORMATS[i_format](i, parameters=input_params).transform()
+                    logging.info(f"conv: intermediate={intermediate_bytearray_val}")
+                    o = OUTPUT_FORMATS[o_format](intermediate_bytearray_val, parameters=output_params).transform()
+                    logging.info(f"conv: o= {o}, type={type(o)}")
 
                 except (UnicodeError, UnicodeEncodeError, UnicodeDecodeError):
                     raise EncodeDecodeError("Error in encoding/decoding.")
 
-                y = y if y.strip() != "" else "Empty"
-                logging.info(f"/x2y: y = {y} (aft transform), and type={type(y)}")
+                o = o if o.strip() != "" else "Empty"
+                logging.info(f"/conv: o = {o} (aft transform), and type={type(o)}")
 
                 embed = SafeEmbed(
-                    title="x2y",
-                    description=f"Conversion from {x_format} to {y_format}",
+                    title="conv",
+                    description=f"Conversion from {i_format} to {o_format}",
                     color=discord.Colour.blue()
                 )
-                embed.safe_add_field(name="Input", value=x, strip_md=True)
+                embed.safe_add_field(name="Input", value=i, strip_md=True)
                 def output_too_long_err():
                     raise FieldTooLongError(
                         "Output too long. Max 1024 characters.")
-                embed.safe_add_field(name="Output", value=y, strip_md=True, error=True, exc_callback=output_too_long_err)
+                embed.safe_add_field(name="Output", value=o, strip_md=True, error=True, exc_callback=output_too_long_err)
 
-                embed.safe_add_field(name="Input format", value=x_format)
-                embed.safe_add_field(name="Output format", value=y_format)
+                embed.safe_add_field(name="Input format", value=i_format)
+                embed.safe_add_field(name="Output format", value=o_format)
 
             except (InputInvalidException, InvalidExpressionException, FieldTooLongError, EncodeDecodeError, CipherError) as err:
                 errstr = str(err) if str(err).strip() != "" else "An error occurred."
-                logging.error(f"/x2y error: {errstr} - {type(err)}")
+                logging.error(f"/conv error: {errstr} - {type(err)}")
                 embed = SafeEmbed(
                     title="Error!",
                     description=errstr,
                     color=discord.Colour.red()
                 )
-                embed.safe_add_field(name="Input", value=x, strip_md=True)
-                embed.safe_add_field(name="Input format", value=x_format)
-                embed.safe_add_field(name="Output format", value=y_format)
+                embed.safe_add_field(name="Input", value=i, strip_md=True)
+                embed.safe_add_field(name="Input format", value=i_format)
+                embed.safe_add_field(name="Output format", value=o_format)
 
             return embed
-        x_class = INPUT_FORMATS[x_format]
-        y_class = OUTPUT_FORMATS[y_format]
+        x_class = INPUT_FORMATS[i_format]
+        y_class = OUTPUT_FORMATS[o_format]
         uses_params = x_class.uses_params() or y_class.uses_params()
 
         if uses_params:
@@ -162,6 +173,7 @@ class Utils(BaseCog):
         runner = self.code_runner
         error_msg = None
         out = None
+        await ctx.defer()
         try:
             out = await runner.run(lang, code, stdin, args)
         except TooManyRequests:
@@ -193,6 +205,9 @@ class Utils(BaseCog):
                 "Exit code",
                 exit_code
             )
+            if lang == base64.b64decode("YnJhaW5mdWNr").decode("utf-8"):
+                # bflang
+                lang = "bflang"
             embed.safe_add_field(
                 "Language",
                 lang
@@ -204,5 +219,94 @@ class Utils(BaseCog):
                 description=error_msg
             )
             logging.error(f"/run: error occurred: {ex_value}")
+
+        await ctx.respond(embed=embed)
+
+    @commands.slash_command(name="py_with_libs", description="Run Python3 code with libraries from PyPI")
+    @discord.option("code", description="Contents of program")
+    @discord.option("lib", description="Library to include")
+    @discord.option("stdin", description="Standard input", required=False)
+    @discord.option("args", description="Arguments to supply to program (e.g. in sys.argv)", required=False)
+    async def py_with_libs(self, ctx: discord.ApplicationContext, code, lib, stdin, args):
+        runner = self.code_runner
+        error_msg = None
+        out = None
+        await ctx.defer()
+
+
+
+
+        try:
+            whl = await download_py_whl(lib)
+            filename = whl[0]
+            lib_whl_contents = whl[1]
+            lib_whl_contents_b64 = base64.b64encode(lib_whl_contents).decode("utf-8")
+            logging.info(f"/py-with-libs: lib_whl_contents_b64  {lib_whl_contents_b64}")
+            files_extra = [File(lib_whl_contents_b64, "package.whl.base64")]
+
+            patched_code = f"""import base64, os, sys, subprocess
+with open("package.whl.base64", "rb") as file:
+    decoded_file = base64.b64decode(file.read())
+with open("{filename}", "wb") as file: 
+    file.write(decoded_file)
+os.mkdir("pkg-dir")
+cwd = os.getcwd()
+pkg_dir = os.path.join(cwd, "pkg-dir")
+subprocess.run(["python3", "-m", "pip", "install", "--target=" + pkg_dir,  "{filename}"])
+sys.path.append(pkg_dir)
+print("--- Execution ---")
+
+"""
+            patched_code += code
+
+
+
+
+
+            out = await runner.run("python", patched_code, stdin, args, other_files=files_extra, run_timeout=360_000) # Run for 6 min to allow package to download
+        except TooManyRequests:
+            error_msg = "Bot has exceeded its rate limit. Please try again shortly."
+        except InternalServerError:
+            error_msg = "Internal server error occurred."
+        except ExecutionError as err:
+            error_msg = f"Execution error: {err}"
+        except UnexpectedError as err:
+            error_msg = f"An unexpected error has occurred: {err}"
+        except NoSuitablePackageException as err:
+            error_msg = str(err) # We already made sure error msgs are presentable in libdl.py.
+        ex_type, ex_value, traceback = sys.exc_info()
+        if not error_msg:
+            output = out.output
+            exit_code = out.exit_code
+            # original code, exit status, lang
+
+            embed = SafeEmbed(
+                title="Program result",
+                description=wrap_in_codeblocks(output),  # May trigger an error if >1024 chars!
+                colour=discord.Colour.dark_blue()
+            )
+            embed.safe_add_field(
+                "Supplied program",
+                wrap_in_codeblocks(code)
+            )
+            embed.safe_add_field(
+                "Exit code",
+                exit_code
+            )
+            embed.safe_add_field(
+                "Language",
+                "py-with-libs"
+            )
+            embed.safe_add_field(
+                "Library included",
+                lib
+            )
+
+        else:
+            embed = SafeEmbed(
+                title="Error!",
+                description=error_msg
+            )
+            logging.error(f"/py_with_libs: error occurred: {ex_value}")
 
         await ctx.respond(embed=embed)
