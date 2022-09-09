@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, List
 
 from pyston import PystonClient, File
 from pyston.exceptions import InvalidLanguage
@@ -19,7 +19,7 @@ class PistonCodeRunner:
         return langs
 
     async def run(self, lang: str, contents: str, stdin: Optional[str] = None, args: Optional[str] = None,
-                  filename=None):
+                  filename=None, other_files: List[File] = None, compile_timeout=60_000, run_timeout = 60_000):
         """
         Runs code. This function is asynchronous.
         :param str lang: Language of the code (e.g. Python, Kotlin)
@@ -27,6 +27,9 @@ class PistonCodeRunner:
         :param str stdin: Standard input.
         :param str args: Arguments to the program.
         :param str filename: Optional filename.
+        :param str other_files: Other files to include.
+        :param run_timeout: Run timeout
+        :param compile_timeout: Compule timeout.
         :return: An output object, of class [OutputInfo].
         :raises: InvalidLanguage: Invalid language supplied.
         :raises: TooManyRequests: Code Runner has been rate limited.
@@ -48,8 +51,11 @@ class PistonCodeRunner:
             contents = new_contents
 
         code = [File(contents, filename)]
-        output_obj = await self.client.execute(lang, code, stdin=stdin, args=args, compile_timeout=15_000,
-                                               run_timeout=60_000)
+        if other_files:
+            code.extend(other_files)
+
+        output_obj = await self.client.execute(lang, code, stdin=stdin, args=args, compile_timeout=compile_timeout,
+                                               run_timeout=run_timeout)
 
         detected_lang = output_obj.langauge
         run_stage = output_obj.run_stage
