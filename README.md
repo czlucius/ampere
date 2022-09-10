@@ -7,7 +7,7 @@ A multi-purpose Discord Bot written with Python and pycord.
 Calculate, run code, convert between formats and more!
 
 To use this bot, invite it to your server/channel.  
-General invite link: https://discord.com/api/oauth2/authorize?client_id=979407128567623760&permissions=0&scope=bot%20applications.commands
+General invite link: https://dsc.gg/ampere
 
 Bot will be added to Top.gg and other sites soon.
 
