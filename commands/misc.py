@@ -149,7 +149,7 @@ class Misc(BaseCog):
 
             embed.safe_add_field(
                 "Invite link",
-                "https://gg.gg/1261z8"
+                "https://dsc.gg/ampere"
             )
 
             embed.safe_add_field("Source", "https://github.com/czlucius/ampere")
