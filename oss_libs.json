@@ -19,8 +19,80 @@
     "name": "py-expression-eval",
     "description": "Python Mathematical Expression Evaluator",
     "license": "MIT License",
-    "license-url": "https://github.com/Pycord-Development/pycord/blob/master/LICENSE",
+    "license-url": "https://github.com/axiacore/py-expression-eval/blob/master/LICENSE",
     "copyright-notice": "None",
     "source": "https://github.com/AxiaCore/py-expression-eval"
+  },
+  {
+    "name": "python-dotenv",
+    "description": "Python .env variables loader",
+    "license": "BSD 3-Clause License",
+    "license-url": "https://github.com/theskumar/python-dotenv/blob/main/LICENSE",
+    "copyright-notice": "Copyright (c) 2014, Saurabh Kumar",
+    "source": "https://github.com/theskumar/python-dotenv"
+  },
+  {
+    "name": "base58",
+    "description": "Base58 and Base58Check implementation compatible with what is used by the bitcoin network.",
+    "license": "MIT License",
+    "license-url": "https://github.com/keis/base58/blob/master/COPYING",
+    "copyright-notice": "Copyright (c) 2015 David Keijser",
+    "source": "https://github.com/keis/base58"
+  },
+  {
+    "name": "pybase62",
+    "description": "Python module for base62 encoding",
+    "license": "BSD 2-Clause \"Simplified\" License",
+    "license-url": "https://github.com/suminb/base62/blob/develop/LICENSE",
+    "copyright-notice": "Copyright (c) 2014, Sumin Byeon",
+    "source": "https://github.com/suminb/base62"
+  },
+  {
+    "name": "base45",
+    "description": "A Python module to encode/decode binary data using Base45 as described in RFC 9285.",
+    "license": "BSD 2-Clause \"Simplified\" License",
+    "license-url": "https://github.com/kirei/python-base45/blob/main/LICENSE",
+    "copyright-notice": "Copyright (c) 2021, Kirei AB",
+    "source": "https://github.com/kirei/python-base45"
+  },
+  {
+    "name": "pycryptodome",
+    "description": "A self-contained cryptographic library for Python",
+    "license": "Public domain (partial) and BSD 2-Clause license (partial)",
+    "license-url": "https://github.com/Legrandin/pycryptodome/blob/master/LICENSE.rst",
+    "copyright-notice": "None",
+    "source": "https://github.com/Legrandin/pycryptodome"
+  },
+  {
+    "name": "aiopyston",
+    "description": "An asynchronous API wrapper for the Piston API",
+    "license": "MIT License",
+    "license-url": "https://github.com/shhivv/pyston/blob/main/LICENSE.txt",
+    "copyright-notice": "Copyright (c) 2021 Fang",
+    "source": "https://github.com/shhivv/pyston"
+  },
+  {
+    "name": "LibreTranslate",
+    "description": "Free and Open Source Machine Translation API.",
+    "license": "GNU Affero General Public License v3.0",
+    "license-url": "https://github.com/LibreTranslate/LibreTranslate/blob/main/LICENSE",
+    "copyright-notice": "None",
+    "source": "https://github.com/LibreTranslate/LibreTranslate"
+  },
+  {
+    "name": "libretranslatepy",
+    "description": "Python bindings for LibreTranslate",
+    "license": "MIT License",
+    "license-url": "https://github.com/argosopentech/LibreTranslate-py/blob/main/LICENSE",
+    "copyright-notice": "Copyright (c) 2021 Argos Open Tech",
+    "source": "https://github.com/argosopentech/LibreTranslate-py"
+  },
+  {
+    "name": "Wheelodex",
+    "description": "An Index of Python Wheels",
+    "license": "MIT License",
+    "license-url": "https://github.com/jwodder/wheelodex/blob/master/LICENSE",
+    "copyright-notice": "Copyright (c) 2017-2020 John Thorvald Wodder II",
+    "source": "https://github.com/jwodder/wheelodex"
   }
 ]
