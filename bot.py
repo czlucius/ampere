@@ -33,7 +33,11 @@ TOKEN = os.getenv("TOKEN")
 cogs = [Math, Misc, Dev, Rand]
 bot = discord.Bot()
 
-logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] - [%(levelname)s] - %(message)s')
+logging.basicConfig(filename="discord.log",
+                    filemode='a',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.DEBUG)
 logging.debug("Start of program")
 
 
