@@ -1,4 +1,8 @@
 # ampere
+[![Lines of code](https://tokei.rs/b1/github/czlucius/ampere?category=code)](https://github.com/czlucius/code-scanner)
+
+<img src="https://user-images.githubusercontent.com/58442255/189476048-affd92ce-1521-41a5-bbf7-0ba73ef81e7a.png" height=80 alt="Icon"/>  
+
 A multi-purpose Discord Bot written with Python and pycord.  
 Calculate, run code, convert between formats and more!
 
