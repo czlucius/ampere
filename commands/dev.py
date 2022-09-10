@@ -319,7 +319,7 @@ print("--- Execution ---")
             )
             embed.safe_add_field(
                 "Language",
-                "py-with-libs"
+                "py-with-external-libs"
             )
             embed.safe_add_field(
                 "Library included",
