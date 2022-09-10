@@ -80,6 +80,7 @@ async def download_py_whl(lib_name: str):
         if arch in filename or "-any" in filename:
             processed.append(whl)
     if not processed:
+        logging.info(f"blocked @ processed: {processed}")
         raise NoSuitablePackageException("Library exists, but no compatible version found.")
 
     to_run = []
@@ -87,43 +88,40 @@ async def download_py_whl(lib_name: str):
         href = "https://www.wheelodex.org/" + whl["href"]
         with urllib.request.urlopen(href) as url_data:
             href_data = json.load(url_data)
-        try:
-            rollout_info = href_data["data"]
-            whl_archs = rollout_info["arch"]
-            arch_compat = False
-            if "any" in whl_archs:
+        rollout_info = href_data["data"]
+        whl_archs = rollout_info["arch"]
+        arch_compat = False
+        if "any" in whl_archs:
+            arch_compat = True
+        for whl_arch in whl_archs:
+            if arch in whl_arch:  # To cater to arch names such as manylinux2010_x86_64 which are not equal
                 arch_compat = True
-            for whl_arch in whl_archs:
-                if arch in whl_arch:  # To cater to arch names such as manylinux2010_x86_64 which are not equal
+                break
+
+        # The Piston compiler runs on Python 3.73 (please file an issue if this has changed)
+        # So, if manylinux is used, only manylinux2010 and manylinux1 is compatible.
+        # Drop packages with manylinux2014 or manylinux_x
+        for whl_arch in whl_archs:
+            if "manylinux" in whl_arch:
+                if "manylinux2014" in whl_arch or "manylinux_" in whl_arch:
+                    # Discard even though arch is compatible.
+                    arch_compat = False
+                    # We cannot break in case there is a manylinux that is compatible afterwards.
+                else:
                     arch_compat = True
                     break
+        if not arch_compat:
+            continue
 
-            # The Piston compiler runs on Python 3.73 (please file an issue if this has changed)
-            # So, if manylinux is used, only manylinux2010 and manylinux1 is compatible.
-            # Drop packages with manylinux2014 or manylinux_x
-            for whl_arch in whl_archs:
-                if "manylinux" in whl_arch:
-                    if "manylinux2014" in whl_arch or "manylinux_" in whl_arch:
-                        # Discard even though arch is compatible.
-                        arch_compat = False
-                        # We cannot break in case there is a manylinux that is compatible afterwards.
-                    else:
-                        arch_compat = True
-                        break
-            if not arch_compat:
-                continue
+        # Check the pyver. (must either start with py3 or cp3). We are not going to run Python 2 packages.
+        pyvers: str = rollout_info["pyver"]
+        no_compat = True
+        for pyver in pyvers:
+            if (pyver.startswith("py3") or pyver.startswith("cp3")):
+                no_compat = False
+        if no_compat: continue
+        # TODO add parsing code for ABI.
 
-            # Check the pyver. (must either start with py3 or cp3). We are not going to run Python 2 packages.
-            pyver: str = rollout_info["pyver"][0]
-            if not (pyver.startswith("py3") or pyver.startswith("cp3")):
-                # Discard.
-                continue
-
-            # TODO add parsing code for ABI.
-        except KeyError:
-            # Some libs, e.g. tensorflow do not have the data section.
-            # We shall just skip this part then, and download the whl and hope it works.
-            pass
 
 
         whl2 = whl.copy()
@@ -131,6 +129,8 @@ async def download_py_whl(lib_name: str):
         to_run.append(whl2)
 
     if not to_run:
+        logging.info(f"blocked @ torun: {to_run}")
+
         raise NoSuitablePackageException("Library exists, but no compatible version found.")
 
     # We just pick the 1st one since all the packages in to_run can be run.
@@ -140,5 +140,7 @@ async def download_py_whl(lib_name: str):
 
     with urllib.request.urlopen(whl_url_to_dl) as pkg_raw:
         pkg_contents = pkg_raw.read()
+
+    logging.info(f"Suitable pkg found: {[filename1]}")
 
     return [filename1, pkg_contents]
