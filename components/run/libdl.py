@@ -16,6 +16,8 @@ async def download_py_whl(lib_name: str):
     :return: Contents of the whl file
     :raises: NoSuitablePackageFoundException: if there is no suitable package found
     """
+    # TODO pip also accepts *.tar.gz files, so we can download the relevant distribution from PyPI-Simple for libs w/o wheel distributions.
+    # We can use pypi simple to fetch, and check if the lib is compatible through filename.
 
     logging.info(f"download_py_whl: library name: {lib_name}")
     url = "https://www.wheelodex.org/json/projects/" + lib_name  # TODO please improve this!
@@ -58,7 +60,7 @@ async def download_py_whl(lib_name: str):
         # We only include the specific architecture, or any.
         # for any, we may detect false positives if the package name is similar, but its ok.
         # we will filter these in the querying step.
-        if arch in filename or "any" in filename:
+        if arch in filename or "-any" in filename:
             processed.append(whl)
     if not processed:
         raise NoSuitablePackageException("Library exists, but no compatible version found.")
@@ -68,39 +70,44 @@ async def download_py_whl(lib_name: str):
         href = "https://www.wheelodex.org/" + whl["href"]
         with urllib.request.urlopen(href) as url_data:
             href_data = json.load(url_data)
-
-        rollout_info = href_data["data"]
-        whl_archs = rollout_info["arch"]
-        arch_compat = False
-        if "any" in whl_archs:
-            arch_compat = True
-        for whl_arch in whl_archs:
-            if arch in whl_arch:  # To cater to arch names such as manylinux2010_x86_64 which are not equal
+        try:
+            rollout_info = href_data["data"]
+            whl_archs = rollout_info["arch"]
+            arch_compat = False
+            if "any" in whl_archs:
                 arch_compat = True
-                break
-
-        # The Piston compiler runs on Python 3.73 (please file an issue if this has changed)
-        # So, if manylinux is used, only manylinux2010 and manylinux1 is compatible.
-        # Drop packages with manylinux2014 or manylinux_x
-        for whl_arch in whl_archs:
-            if "manylinux" in whl_arch:
-                if "manylinux2014" in whl_arch or "manylinux_" in whl_arch:
-                    # Discard even though arch is compatible.
-                    arch_compat = False
-                    # We cannot break in case there is a manylinux that is compatible afterwards.
-                else:
+            for whl_arch in whl_archs:
+                if arch in whl_arch:  # To cater to arch names such as manylinux2010_x86_64 which are not equal
                     arch_compat = True
                     break
-        if not arch_compat:
-            continue
 
-        # Check the pyver. (must either start with py3 or cp3). We are not going to run Python 2 packages.
-        pyver: str = rollout_info["pyver"][0]
-        if not (pyver.startswith("py3") or pyver.startswith("cp3")):
-            # Discard.
-            continue
+            # The Piston compiler runs on Python 3.73 (please file an issue if this has changed)
+            # So, if manylinux is used, only manylinux2010 and manylinux1 is compatible.
+            # Drop packages with manylinux2014 or manylinux_x
+            for whl_arch in whl_archs:
+                if "manylinux" in whl_arch:
+                    if "manylinux2014" in whl_arch or "manylinux_" in whl_arch:
+                        # Discard even though arch is compatible.
+                        arch_compat = False
+                        # We cannot break in case there is a manylinux that is compatible afterwards.
+                    else:
+                        arch_compat = True
+                        break
+            if not arch_compat:
+                continue
 
-        # TODO add parsing code for ABI.
+            # Check the pyver. (must either start with py3 or cp3). We are not going to run Python 2 packages.
+            pyver: str = rollout_info["pyver"][0]
+            if not (pyver.startswith("py3") or pyver.startswith("cp3")):
+                # Discard.
+                continue
+
+            # TODO add parsing code for ABI.
+        except KeyError:
+            # Some libs, e.g. tensorflow do not have the data section.
+            # We shall just skip this part then, and download the whl and hope it works.
+            pass
+
 
         whl2 = whl.copy()
         whl2["hrefdata"] = href_data

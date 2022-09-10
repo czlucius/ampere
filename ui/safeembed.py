@@ -12,6 +12,13 @@ def dummy_escape(content):
 
 
 class SafeEmbed(discord.Embed):
+    def __init__(self,**kwargs):
+        if "description" in kwargs:
+            if len(kwargs["description"]) > 4096:
+                kwargs["description"] = "Field over 4096 characters."
+
+        super().__init__(**kwargs)
+
     @staticmethod
     def exc_callback():
         raise FieldTooLongError("Field is too long to display in embed.")

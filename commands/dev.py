@@ -192,9 +192,13 @@ class Dev(BaseCog):
             exit_code = out.exit_code
             # original code, exit status, lang
 
+            output_wrapped = wrap_in_codeblocks(output)
+            if len(output_wrapped) > 4096:
+                output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
+
             embed = SafeEmbed(
                 title="Program result",
-                description=wrap_in_codeblocks(output), # May trigger an error if >1024 chars!
+                description=output_wrapped,
                 colour=discord.Colour.teal()
             )
             embed.safe_add_field(
@@ -222,12 +226,12 @@ class Dev(BaseCog):
 
         await ctx.respond(embed=embed)
 
-    @commands.slash_command(name="py_with_libs", description="Run Python3 code with libraries from PyPI")
+    @commands.slash_command(name="py_with_external_libs", description="Run Python3 code with libraries from PyPI")
     @discord.option("code", description="Contents of program")
     @discord.option("lib", description="Library to include")
     @discord.option("stdin", description="Standard input", required=False)
     @discord.option("args", description="Arguments to supply to program (e.g. in sys.argv)", required=False)
-    async def py_with_libs(self, ctx: discord.ApplicationContext, code, lib, stdin, args):
+    async def py_with_external_libs(self, ctx: discord.ApplicationContext, code, lib, stdin, args):
         runner = self.code_runner
         error_msg = None
         out = None
@@ -252,9 +256,10 @@ with open("{filename}", "wb") as file:
 os.mkdir("pkg-dir")
 cwd = os.getcwd()
 pkg_dir = os.path.join(cwd, "pkg-dir")
-subprocess.run(["python3", "-m", "pip", "install", "--target=" + pkg_dir,  "{filename}"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+subprocess.run(["python3", "-m", "pip", "install", "--target=" + pkg_dir,  "{filename}"])
 sys.path.append(pkg_dir)
-
+print()
+print("--- Execution ---")
 """
             patched_code += code
 
@@ -278,10 +283,13 @@ sys.path.append(pkg_dir)
             output = out.output
             exit_code = out.exit_code
             # original code, exit status, lang
+            output_wrapped = wrap_in_codeblocks(output)
+            if len(output_wrapped) > 4096:
+                output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
 
             embed = SafeEmbed(
                 title="Program result",
-                description=wrap_in_codeblocks(output),  # May trigger an error if >1024 chars!
+                description=output_wrapped,
                 colour=discord.Colour.dark_blue()
             )
             embed.safe_add_field(

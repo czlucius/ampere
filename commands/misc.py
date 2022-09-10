@@ -94,24 +94,17 @@ class Misc(BaseCog):
 
         with json_open("oss_libs.json", "r") as info:
             for lib in info:
+                lib_name = lib["name"]
+                lib_info = f"""{lib["description"]}
+**Copyright notice**: 
+{lib["copyright-notice"]}
+Licensed under {lib['license']}
+**License URL**: {lib["license-url"]}
+**Source**: {lib["source"]}  
+"""
                 embed.safe_add_field(
-                    lib["name"],
-                    lib["description"]
-                )
-                embed.safe_add_field(
-                    f"Licensed under {lib['license']}",
-                    lib["license-url"],
-                    True
-                )
-                embed.safe_add_field(
-                    "Source",
-                    lib["source"],
-                    True
-                )
-                embed.safe_add_field(
-                    "Copyright Notice",
-                    lib["copyright-notice"],
-                    True
+                    lib_name,
+                    lib_info
                 )
 
         with json_open("bot_oss.json", "r") as oss_json:
@@ -153,5 +146,6 @@ class Misc(BaseCog):
             )
 
             embed.safe_add_field("Source", "https://github.com/czlucius/ampere")
+            embed.safe_add_field("Created by", "lcz5#3392")
 
         await ctx.respond(embed=embed)
