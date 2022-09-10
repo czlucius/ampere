@@ -33,4 +33,4 @@ Commands:
 - Rand - rng
 - Misc - translate, ping, oss, help
 
-This bot is uses slash commands.
+This bot uses slash commands.
