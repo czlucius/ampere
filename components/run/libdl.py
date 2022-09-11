@@ -44,16 +44,21 @@ async def download_py_whl(lib_name: str):
         whl_data = json.load(url_data)
     if not whl_data:
         raise NoSuitablePackageException("Library not found/does not have a wheel distribution.")
-
-    current_latest = (-99999, -99999, -99999)
-    latest_info = []
-    for version in whl_data.items():
-        major, minor, patch = [int(x, 10) for x in version[0].split('.')]
-        if (major > current_latest[0]) or\
-                (major == current_latest[0] and minor > current_latest[1]) or\
-                (major == current_latest[0] and minor == current_latest[1] and patch > current_latest[2]):
-            current_latest = (major, minor, patch)
-        latest_info = version[1]
+    try:
+        current_latest = (-99999, -99999, -99999)
+        latest_info = []
+        for version in whl_data.items():
+            major, minor, patch = [int(x, 10) for x in version[0].split('.')]
+            if (major > current_latest[0]) or\
+                    (major == current_latest[0] and minor > current_latest[1]) or\
+                    (major == current_latest[0] and minor == current_latest[1] and patch > current_latest[2]):
+                current_latest = (major, minor, patch)
+            latest_info = version[1]
+            print(latest_info, "latestinfo")
+    except ValueError:
+        # Unusual version naming convention.
+        # We just pick the 1st one (usually PyPI would only give 1 version)
+        latest_info = list(whl_data.values())[0]
 
     sample = PistonCodeRunner()
     arch = (await sample.run("bash", "uname -m")).output
@@ -98,18 +103,6 @@ async def download_py_whl(lib_name: str):
                 arch_compat = True
                 break
 
-        # The Piston compiler runs on Python 3.73 (please file an issue if this has changed)
-        # So, if manylinux is used, only manylinux2010 and manylinux1 is compatible.
-        # Drop packages with manylinux2014 or manylinux_x
-        for whl_arch in whl_archs:
-            if "manylinux" in whl_arch:
-                if "manylinux2014" in whl_arch or "manylinux_" in whl_arch:
-                    # Discard even though arch is compatible.
-                    arch_compat = False
-                    # We cannot break in case there is a manylinux that is compatible afterwards.
-                else:
-                    arch_compat = True
-                    break
         if not arch_compat:
             continue
 
