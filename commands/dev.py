@@ -21,6 +21,7 @@ import logging
 import discord
 import sys
 
+from aiohttp import ContentTypeError
 from discord.ext import commands
 from pyston import File
 from pyston.exceptions import *
@@ -295,6 +296,9 @@ print("--- Execution ---")
             error_msg = f"An unexpected error has occurred: {err}"
         except NoSuitablePackageException as err:
             error_msg = str(err) # We already made sure error msgs are presentable in libdl.py.
+        except ContentTypeError: # It'll return a HTML 404 page if file is too large, and this error will be thrown
+            error_msg = "Library is too large"
+
         ex_type, ex_value, traceback = sys.exc_info()
         if not error_msg:
             output = out.output
