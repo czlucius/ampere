@@ -1,9 +1,13 @@
 # ampere
+[![Lines of code](https://tokei.rs/b1/github/czlucius/ampere?category=code)](https://github.com/czlucius/ampere)
+
+<img src="https://user-images.githubusercontent.com/58442255/189476048-affd92ce-1521-41a5-bbf7-0ba73ef81e7a.png" height=80 alt="Icon"/>  
+
 A multi-purpose Discord Bot written with Python and pycord.  
 Calculate, run code, convert between formats and more!
 
 To use this bot, invite it to your server/channel.  
-General invite link: https://discord.com/api/oauth2/authorize?client_id=979407128567623760&permissions=0&scope=bot%20applications.commands
+General invite link: https://dsc.gg/ampere
 
 Bot will be added to Top.gg and other sites soon.
 
@@ -29,4 +33,4 @@ Commands:
 - Rand - rng
 - Misc - translate, ping, oss, help
 
-This bot is uses slash commands.
+This bot uses slash commands.

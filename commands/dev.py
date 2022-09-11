@@ -61,7 +61,7 @@ INPUT_FORMATS = {
     "caesar-cipher": CaesarCipherToByteArray,
     "aes-ecb-base64": AESECBToByteArray,
     "des-ecb-base64": DESECBToByteArray,
-    "3des-ecb-base64": DESECBToByteArray
+    "3des-ecb-base64": DES3ECBToByteArray
 }
 
 
@@ -323,7 +323,7 @@ print("--- Execution ---")
             )
             embed.safe_add_field(
                 "Language",
-                "py-with-libs"
+                "py-with-external-libs"
             )
             embed.safe_add_field(
                 "Library included",

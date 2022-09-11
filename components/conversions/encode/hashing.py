@@ -22,7 +22,7 @@ from Crypto.Hash import SHA256, MD5, SHA1, SHA512
 
 
 class ByteArrayToGenericHash(XToY):
-    def __init__(self, val, hashing_cls):
+    def __init__(self, val, hashing_cls, **kwargs):
         super().__init__(val, _type=XToY.FROM_UNICODE)
         self.hashing_cls = hashing_cls
 
@@ -37,17 +37,17 @@ class ByteArrayToGenericHash(XToY):
 
 
 class ByteArrayToSHA256(ByteArrayToGenericHash):
-    def __init__(self, val):
+    def __init__(self, val, **kwargs):
         super().__init__(val, SHA256)
 
 class ByteArrayToMD5(ByteArrayToGenericHash):
-    def __init__(self, val):
+    def __init__(self, val, **kwargs):
         super().__init__(val, MD5)
 
 class ByteArrayToSHA1(ByteArrayToGenericHash):
-    def __init__(self, val):
+    def __init__(self, val,**kwargs):
         super().__init__(val, SHA1)
 
 class ByteArrayToSHA512(ByteArrayToGenericHash):
-    def __init__(self, val):
+    def __init__(self, val, **kwargs):
         super().__init__(val, SHA512)
