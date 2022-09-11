@@ -263,7 +263,6 @@ class Dev(BaseCog):
             filename = whl[0]
             lib_whl_contents = whl[1]
             lib_whl_contents_b64 = base64.b64encode(lib_whl_contents).decode("utf-8")
-            logging.info(f"/py-with-libs: lib_whl_contents_b64  {lib_whl_contents_b64}")
             files_extra = [File(lib_whl_contents_b64, "package.whl.base64")]
 
             patched_code = f"""import base64, os, sys, subprocess
