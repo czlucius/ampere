@@ -61,7 +61,7 @@ async def download_py_whl(lib_name: str):
         latest_info = list(whl_data.values())[0]
 
     sample = PistonCodeRunner()
-    arch = (await sample.run("bash", "uname -m")).output
+    arch = (await sample.run("bash", "uname -m")).output.strip()
 
     # Architecture can be x86_64, aarch64, etc.
     # We need to discard as many irrelevant packages, and cannot afford to query for every single one
