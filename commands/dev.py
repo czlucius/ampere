@@ -309,7 +309,7 @@ print("--- Execution ---")
             output = out.output
             exit_code = out.exit_code
             # original code, exit status, lang
-            output_wrapped = wrap_in_codeblocks(output, "python")
+            output_wrapped = wrap_in_codeblocks(output)
             if len(output_wrapped) > 4096:
                 output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
 
@@ -320,7 +320,7 @@ print("--- Execution ---")
             )
             embed.safe_add_field(
                 "Supplied program",
-                wrap_in_codeblocks(code)
+                wrap_in_codeblocks(code, "python")
             )
             embed.safe_add_field(
                 "Exit code",
