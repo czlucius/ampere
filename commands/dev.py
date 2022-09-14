@@ -262,12 +262,12 @@ class Dev(BaseCog):
             whl = await download_py_whl(lib)
             filename = whl[0]
             lib_whl_contents = whl[1]
-            lib_whl_contents_b64 = base64.b64encode(lib_whl_contents).decode("utf-8")
-            files_extra = [File(lib_whl_contents_b64, "package.whl.base64")]
+            lib_whl_contents_b64 = base64.a85encode(lib_whl_contents).decode("utf-8")
+            files_extra = [File(lib_whl_contents_b64, "package.whl.a85")]
 
             patched_code = f"""import base64, os, sys, subprocess
-with open("package.whl.base64", "rb") as file:
-    decoded_file = base64.b64decode(file.read())
+with open("package.whl.a85", "rb") as file:
+    decoded_file = base64.a85decode(file.read())
 with open("{filename}", "wb") as file: 
     file.write(decoded_file)
 os.mkdir("pkg-dir")
