@@ -228,6 +228,11 @@ class Dev(BaseCog):
                 "Exit code",
                 exit_code
             )
+            
+            if stdin:
+                embed.safe_add_field("Input (stdin)", stdin)
+            if args:
+                embed.safe_add_field("Arguments", args)
             if lang == base64.b64decode("YnJhaW5mdWNr").decode("utf-8"):
                 # bflang
                 lang = "bflang"
