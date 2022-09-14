@@ -24,7 +24,7 @@ MARKDOWN_CHARS_TO_ESC = {"\\": "\\\\",  # NOTE: this MUST be placed as the first
                          "*": "\\*", "_": "\\_", "~": "\\~", "`": "\\`", ">": "\\>"
                          }
 
-
+LANGS_REPLACEMENTS = {"python2": "py"}
 def get_latency_ms(bot):
     return round(bot.latency * 1000, 1)
 
@@ -39,12 +39,19 @@ def escape_from_md(content: str):
     logging.info(f"escape_from_md, original={content}, formatted={new_content}")
     return new_content
 
-def wrap_in_codeblocks(content: str):
+def wrap_in_codeblocks(content: str, lang: str = ""):
     if len(content) == 0:
         return content # We cannot have empty content in a codeblock, it will just show ``````
     content = content.replace("```", "`\u200d`\u200d`") # We replace with ZWJ between so the codeblock will not escape even if there is ```.
-    content = "```\n" + content + "\n```" # Wrap content in codeblocks.
+    content = f"```{lang}\n" + content + "\n```" # Wrap content in codeblocks.
     return content
+
+
+def lang_for_syntax_highlighting(lang: str):
+    for original, new in LANGS_REPLACEMENTS.items():
+        if lang == original:
+            lang = new
+    return lang
 
 def dummy_func(*args, **kwargs):
     pass

@@ -44,7 +44,7 @@ from components.conversions.decode.cipher import *
 from components.run.coderunner import PistonCodeRunner
 from components.run.libdl import download_py_whl, NoSuitablePackageException
 from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
-from functions.general import autocomplete_list, wrap_in_codeblocks
+from functions.general import autocomplete_list, wrap_in_codeblocks, lang_for_syntax_highlighting
 from ui.params_modals import ParamsModal
 from ui.safeembed import SafeEmbed
 
@@ -219,9 +219,10 @@ class Dev(BaseCog):
                 description=output_wrapped,
                 colour=discord.Colour.teal()
             )
+
             embed.safe_add_field(
                 "Supplied program",
-                wrap_in_codeblocks(code)
+                wrap_in_codeblocks(code, lang_for_syntax_highlighting(lang))
             )
             embed.safe_add_field(
                 "Exit code",
@@ -303,7 +304,7 @@ print("--- Execution ---")
             output = out.output
             exit_code = out.exit_code
             # original code, exit status, lang
-            output_wrapped = wrap_in_codeblocks(output)
+            output_wrapped = wrap_in_codeblocks(output, "python")
             if len(output_wrapped) > 4096:
                 output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
 
