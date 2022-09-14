@@ -3,7 +3,7 @@
     "Dev 🧑‍💻": {
       "**conv**": "Convert from one form to another. (e.g. 'Hello World' -(text>base64)-> 'SGVsbG8gV29ybGQ=)'",
       "**run**": "Run code in different programming languages",
-      "**py_with_libs**": "Run Python 3 code with libraries from PyPI. Supply the library name like how you use pip."
+      "**py_with_external_libs**": "Run Python 3 code with libraries from PyPI. Supply the library name like how you use pip."
     },
     "Math \uD83E\uDDEE": {
       "**calculate**": "Supply a mathematical expression to be evaluated, with an optional precision.",
