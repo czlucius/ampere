@@ -82,9 +82,11 @@ class PistonCodeRunner:
             if len(new_contents) > 1:
                 # If there is more than one line, then a language is specifies
                 contents = "\n".join(new_contents[1:])
-            else:
+            elif len(new_contents) == 1:
                 # If it is only one line, then a language is not specified
                 contents = new_contents[0]
+            else:
+                contents = ""
 
         code = [File(contents, filename)]
         if other_files:
