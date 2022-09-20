@@ -210,7 +210,7 @@ class Dev(BaseCog):
             exit_code = out.exit_code
             # original code, exit status, lang
 
-            output_wrapped = wrap_in_codeblocks(output)
+            output_wrapped = wrap_in_codeblocks(output) if output else "No output detected"
             if len(output_wrapped) > 4096:
                 output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
 
