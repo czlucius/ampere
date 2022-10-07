@@ -19,12 +19,12 @@ import logging
 from typing import Callable
 
 import discord
+from discord.utils import escape_markdown
 
 from exceptions import FieldTooLongError
-from functions.general import escape_from_md
 
 
-def dummy_escape(content):
+def dummy_escape(content: str) -> str:
     return content
 
 
@@ -42,7 +42,7 @@ class SafeEmbed(discord.Embed):
 
     def safe_append_field(self, field: discord.EmbedField, strip_md: bool = False, error: bool = False,
                           exc_callback: Callable = exc_callback):
-        processor = escape_from_md if strip_md else dummy_escape
+        processor = escape_markdown if strip_md else dummy_escape
 
         name = processor(field.name if field.name is not None else "")
         value = processor(field.value if field.value is not None else "")

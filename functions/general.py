@@ -29,16 +29,6 @@ def get_latency_ms(bot):
     return round(bot.latency * 1000, 1)
 
 
-def escape_from_md(content: str):
-    if len(content.strip()) == 0:
-        # Only whitespace
-        return content.strip()
-    new_content = content
-    for charset in MARKDOWN_CHARS_TO_ESC.items():
-        new_content = new_content.replace(*charset)
-    logging.info(f"escape_from_md, original={content}, formatted={new_content}")
-    return new_content
-
 def wrap_in_codeblocks(content: str, lang: str = ""):
     if len(content) == 0:
         return content # We cannot have empty content in a codeblock, it will just show ``````
