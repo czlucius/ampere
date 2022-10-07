@@ -6,6 +6,8 @@
 A multi-purpose Discord Bot written with Python and pycord.  
 Calculate, run code, convert between formats and more!
 
+**🌟Star/watch this repo!🌟**
+
 To use this bot, invite it to your server/channel.  
 General invite link: https://dsc.gg/ampere  
 Top.gg: https://top.gg/bot/979407128567623760
