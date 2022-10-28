@@ -24,7 +24,7 @@ MARKDOWN_CHARS_TO_ESC = {"\\": "\\\\",  # NOTE: this MUST be placed as the first
                          "*": "\\*", "_": "\\_", "~": "\\~", "`": "\\`", ">": "\\>"
                          }
 
-LANGS_REPLACEMENTS = {"python2": "py"}
+LANGS_REPLACEMENTS = {"python2": "py", "sqlite3": "sql"}
 def get_latency_ms(bot):
     return round(bot.latency * 1000, 1)
 
