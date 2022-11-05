@@ -78,9 +78,15 @@ class PistonCodeRunner:
             raise InvalidLanguage(f"No such language: {lang}") # We shall use Pyston's exceptions; there is no need to create our own.
 
         if contents.startswith("```") and contents.endswith("```"):
-            new_contents = contents.strip("```")
-            new_contents = "\n".join(new_contents.splitlines()[1:]) # The 1st line will still have some language e.g. ```(py) even as the ``` is removed.
-            contents = new_contents
+            new_contents = contents.strip("```").splitlines()
+            if len(new_contents) > 1:
+                # If there is more than one line, then a language is specifies
+                contents = "\n".join(new_contents[1:])
+            elif len(new_contents) == 1:
+                # If it is only one line, then a language is not specified
+                contents = new_contents[0]
+            else:
+                contents = ""
 
         code = [File(contents, filename)]
         if other_files:

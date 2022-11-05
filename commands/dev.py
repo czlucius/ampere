@@ -195,6 +195,7 @@ class Dev(BaseCog):
             error_msg = None
             out = None
 
+
             try:
                 out = await runner.run(lang, code, stdin, args)
             except TooManyRequests:
@@ -213,7 +214,7 @@ class Dev(BaseCog):
                 exit_code = out.exit_code
                 # original code, exit status, lang
 
-                output_wrapped = wrap_in_codeblocks(output)
+                output_wrapped = wrap_in_codeblocks(output) if output else "No output detected"
                 if len(output_wrapped) > 4096:
                     output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
 
@@ -231,6 +232,11 @@ class Dev(BaseCog):
                     "Exit code",
                     exit_code
                 )
+
+                if stdin:
+                    embed.safe_add_field("Input (stdin)", stdin)
+                if args:
+                    embed.safe_add_field("Arguments", args)
                 if lang == base64.b64decode("YnJhaW5mdWNr").decode("utf-8"):
                     # bflang
                     lang = "bflang"
@@ -310,6 +316,7 @@ print("--- Execution ---")
                 output_wrapped = wrap_in_codeblocks(output)
                 if len(output_wrapped) > 4096:
                     output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
+
 
                 embed = SafeEmbed(
                     title="Program result",
