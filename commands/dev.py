@@ -45,6 +45,7 @@ from components.run.coderunner import PistonCodeRunner
 from components.run.libdl import download_py_whl, NoSuitablePackageException
 from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
 from functions.general import autocomplete_list, wrap_in_codeblocks, lang_for_syntax_highlighting
+from ui.code_modals import CodeModal
 from ui.params_modals import ParamsModal
 from ui.safeembed import SafeEmbed
 
@@ -183,90 +184,97 @@ class Dev(BaseCog):
 
 
     @commands.slash_command(name="run", description="Run code in any language")
-    @discord.option("code", description="Contents of program")
     @discord.option("lang", description="Language of program", autocomplete=produce_cr_autocomplete(cr_langs))
+    @discord.option("code", description="Contents of program", required=False)
     @discord.option("stdin", description="Standard input", required=False)
     @discord.option("args", description="Arguments to supply to program (e.g. in sys.argv)", required=False)
-    async def run(self, ctx: discord.ApplicationContext, code, lang, stdin, args):
-        runner = self.code_runner
-        error_msg = None
-        out = None
-        await ctx.defer()
-        try:
-            out = await runner.run(lang, code, stdin, args)
-        except TooManyRequests:
-            error_msg = "Bot has exceeded its rate limit. Please try again shortly."
-        except InvalidLanguage:
-            error_msg = f"No such language: {lang}"
-        except InternalServerError:
-            error_msg = "Internal server error occurred."
-        except ExecutionError as err:
-            error_msg = f"Execution error: {err}"
-        except UnexpectedError as err:
-            error_msg = f"An unexpected error has occurred: {err}"
-        ex_type, ex_value, traceback = sys.exc_info()
-        if not error_msg:
-            output = out.output
-            exit_code = out.exit_code
-            # original code, exit status, lang
+    async def run(self, ctx: discord.ApplicationContext, lang, code, stdin, args):
+        async def run_present_embed(code=code):
+            nonlocal lang, stdin, args
+            runner = self.code_runner
+            error_msg = None
+            out = None
 
-            output_wrapped = wrap_in_codeblocks(output)
-            if len(output_wrapped) > 4096:
-                output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
+            try:
+                out = await runner.run(lang, code, stdin, args)
+            except TooManyRequests:
+                error_msg = "Bot has exceeded its rate limit. Please try again shortly."
+            except InvalidLanguage:
+                error_msg = f"No such language: {lang}"
+            except InternalServerError:
+                error_msg = "Internal server error occurred."
+            except ExecutionError as err:
+                error_msg = f"Execution error: {err}"
+            except UnexpectedError as err:
+                error_msg = f"An unexpected error has occurred: {err}"
+            ex_type, ex_value, traceback = sys.exc_info()
+            if not error_msg:
+                output = out.output
+                exit_code = out.exit_code
+                # original code, exit status, lang
 
-            embed = SafeEmbed(
-                title="Program result",
-                description=output_wrapped,
-                colour=discord.Colour.teal()
-            )
+                output_wrapped = wrap_in_codeblocks(output)
+                if len(output_wrapped) > 4096:
+                    output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
 
-            embed.safe_add_field(
-                "Supplied program",
-                wrap_in_codeblocks(code, lang_for_syntax_highlighting(lang))
-            )
-            embed.safe_add_field(
-                "Exit code",
-                exit_code
-            )
-            if lang == base64.b64decode("YnJhaW5mdWNr").decode("utf-8"):
-                # bflang
-                lang = "bflang"
-            embed.safe_add_field(
-                "Language",
-                lang
-            )
+                embed = SafeEmbed(
+                    title="Program result",
+                    description=output_wrapped,
+                    colour=discord.Colour.teal()
+                )
 
+                embed.safe_add_field(
+                    "Supplied program",
+                    wrap_in_codeblocks(code, lang_for_syntax_highlighting(lang))
+                )
+                embed.safe_add_field(
+                    "Exit code",
+                    exit_code
+                )
+                if lang == base64.b64decode("YnJhaW5mdWNr").decode("utf-8"):
+                    # bflang
+                    lang = "bflang"
+                embed.safe_add_field(
+                    "Language",
+                    lang
+                )
+
+            else:
+                embed = SafeEmbed(
+                    title="Error!",
+                    description=error_msg,
+                    colour=discord.Colour.red()
+                )
+                logging.error(f"/run: error occurred: {ex_value}")
+            return embed
+
+        if code:
+            await ctx.defer()
+            await ctx.respond(embed=await run_present_embed(code))
         else:
-            embed = SafeEmbed(
-                title="Error!",
-                description=error_msg
-            )
-            logging.error(f"/run: error occurred: {ex_value}")
+            modal = CodeModal(run_present_embed, title="Code")
+            await ctx.send_modal(modal)
 
-        await ctx.respond(embed=embed)
 
     @commands.slash_command(name="py_with_external_libs", description="Run Python3 code with libraries from PyPI")
-    @discord.option("code", description="Contents of program")
     @discord.option("lib", description="Library to include")
+    @discord.option("code", description="Contents of program", required=False)
     @discord.option("stdin", description="Standard input", required=False)
     @discord.option("args", description="Arguments to supply to program (e.g. in sys.argv)", required=False)
-    async def py_with_external_libs(self, ctx: discord.ApplicationContext, code, lib, stdin, args):
-        runner = self.code_runner
-        error_msg = None
-        out = None
-        await ctx.defer()
+    async def py_with_external_libs(self, ctx: discord.ApplicationContext, lib, code, stdin, args):
+        async def pyrun_present_embed(code=code):
+            runner = self.code_runner
+            error_msg = None
+            out = None
 
+            try:
+                whl = await download_py_whl(lib)
+                filename = whl[0]
+                lib_whl_contents = whl[1]
+                lib_whl_contents_b64 = base64.a85encode(lib_whl_contents).decode("utf-8")
+                files_extra = [File(lib_whl_contents_b64, "package.whl.a85")]
 
-
-
-        try:
-            whl = await download_py_whl(lib)
-            filename = whl[0]
-            lib_whl_contents = whl[1]
-            lib_whl_contents_b64 = base64.a85encode(lib_whl_contents).decode("utf-8")
-            files_extra = [File(lib_whl_contents_b64, "package.whl.a85")]
-
-            patched_code = f"""import base64, os, sys, subprocess
+                patched_code = f"""import base64, os, sys, subprocess
 with open("package.whl.a85", "rb") as file:
     decoded_file = base64.a85decode(file.read())
 with open("{filename}", "wb") as file: 
@@ -279,62 +287,63 @@ sys.path.append(pkg_dir)
 print()
 print("--- Execution ---")
 """
-            patched_code += code
+                patched_code += code
+                out = await runner.run("python", patched_code, stdin, args, other_files=files_extra, run_timeout=360_000) # Run for 6 min to allow package to download
+            except TooManyRequests:
+                error_msg = "Bot has exceeded its rate limit. Please try again shortly."
+            except InternalServerError:
+                error_msg = "Internal server error occurred."
+            except ExecutionError as err:
+                error_msg = f"Execution error: {err}"
+            except UnexpectedError as err:
+                error_msg = f"An unexpected error has occurred: {err}"
+            except NoSuitablePackageException as err:
+                error_msg = str(err) # We already made sure error msgs are presentable in libdl.py.
+            except ContentTypeError: # It'll return a HTML 404 page if file is too large, and this error will be thrown
+                error_msg = "Library is too large"
 
+            ex_type, ex_value, traceback = sys.exc_info()
+            if not error_msg:
+                output = out.output
+                exit_code = out.exit_code
+                # original code, exit status, lang
+                output_wrapped = wrap_in_codeblocks(output)
+                if len(output_wrapped) > 4096:
+                    output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
 
+                embed = SafeEmbed(
+                    title="Program result",
+                    description=output_wrapped,
+                    colour=discord.Colour.dark_blue()
+                )
+                embed.safe_add_field(
+                    "Supplied program",
+                    wrap_in_codeblocks(code, "python")
+                )
+                embed.safe_add_field(
+                    "Exit code",
+                    exit_code
+                )
+                embed.safe_add_field(
+                    "Language",
+                    "py-with-external-libs"
+                )
+                embed.safe_add_field(
+                    "Library included",
+                    lib
+                )
 
-
-
-            out = await runner.run("python", patched_code, stdin, args, other_files=files_extra, run_timeout=360_000) # Run for 6 min to allow package to download
-        except TooManyRequests:
-            error_msg = "Bot has exceeded its rate limit. Please try again shortly."
-        except InternalServerError:
-            error_msg = "Internal server error occurred."
-        except ExecutionError as err:
-            error_msg = f"Execution error: {err}"
-        except UnexpectedError as err:
-            error_msg = f"An unexpected error has occurred: {err}"
-        except NoSuitablePackageException as err:
-            error_msg = str(err) # We already made sure error msgs are presentable in libdl.py.
-        except ContentTypeError: # It'll return a HTML 404 page if file is too large, and this error will be thrown
-            error_msg = "Library is too large"
-
-        ex_type, ex_value, traceback = sys.exc_info()
-        if not error_msg:
-            output = out.output
-            exit_code = out.exit_code
-            # original code, exit status, lang
-            output_wrapped = wrap_in_codeblocks(output, "python")
-            if len(output_wrapped) > 4096:
-                output_wrapped = output_wrapped[:4062] + "... truncated at 4096 chars ..." + "```"
-
-            embed = SafeEmbed(
-                title="Program result",
-                description=output_wrapped,
-                colour=discord.Colour.dark_blue()
-            )
-            embed.safe_add_field(
-                "Supplied program",
-                wrap_in_codeblocks(code)
-            )
-            embed.safe_add_field(
-                "Exit code",
-                exit_code
-            )
-            embed.safe_add_field(
-                "Language",
-                "py-with-external-libs"
-            )
-            embed.safe_add_field(
-                "Library included",
-                lib
-            )
-
+            else:
+                embed = SafeEmbed(
+                    title="Error!",
+                    description=error_msg
+                )
+                logging.error(f"/py_with_libs: error occurred: {ex_value}")
+            return embed
+        if code:
+            await ctx.defer()
+            await ctx.respond(embed=await pyrun_present_embed(code))
         else:
-            embed = SafeEmbed(
-                title="Error!",
-                description=error_msg
-            )
-            logging.error(f"/py_with_libs: error occurred: {ex_value}")
+            modal = CodeModal(pyrun_present_embed, title="Code")
+            await ctx.send_modal(modal)
 
-        await ctx.respond(embed=embed)
