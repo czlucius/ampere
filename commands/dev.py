@@ -185,7 +185,7 @@ class Dev(BaseCog):
 
     @commands.slash_command(name="run", description="Run code in any language")
     @discord.option("lang", description="Language of program", autocomplete=produce_cr_autocomplete(cr_langs))
-    @discord.option("code", description="Contents of program", required=False)
+    @discord.option("code", description="Contents of program, omit for multiline dialog", required=False)
     @discord.option("stdin", description="Standard input", required=False)
     @discord.option("args", description="Arguments to supply to program (e.g. in sys.argv)", required=False)
     async def run(self, ctx: discord.ApplicationContext, lang, code, stdin, args):
@@ -264,7 +264,7 @@ class Dev(BaseCog):
 
     @commands.slash_command(name="py_with_external_libs", description="Run Python3 code with libraries from PyPI")
     @discord.option("lib", description="Library to include")
-    @discord.option("code", description="Contents of program", required=False)
+    @discord.option("code", description="Contents of program, omit for multiline dialog", required=False)
     @discord.option("stdin", description="Standard input", required=False)
     @discord.option("args", description="Arguments to supply to program (e.g. in sys.argv)", required=False)
     async def py_with_external_libs(self, ctx: discord.ApplicationContext, lib, code, stdin, args):
