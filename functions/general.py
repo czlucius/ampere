@@ -43,6 +43,30 @@ def lang_for_syntax_highlighting(lang: str):
             lang = new
     return lang
 
+def filter_codeblocks(content: str):
+    if code.startswith("```") and code.endswith("```"):
+        new_contents = contents.strip("```").splitlines()
+        if len(new_contents) > 1:
+            # If there is more than one line, then a language is specified
+            return "\n".join(new_contents[1:])
+        elif len(new_contents) == 1:
+            # If it is only one line, then a language is not specified
+            return new_contents[0]
+        else:
+            return ""
+        
+def truncate(content: str):
+    # To prevent spam
+    if len(content) > 4096:
+        content = content[:4062] + "... truncated at 4096 chars ..." + "```"
+    split = content.splitlines()
+    if len(split) > 50:
+        content = "\n".join(split[:50])
+        if len(content) > 4063:
+            content = content[:4063] + "\n... truncated at 50 lines ..."
+        else:
+            content = content + "\n... truncated at 50 lines ..."
+    return content
 def dummy_func(*args, **kwargs):
     pass
 
