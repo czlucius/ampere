@@ -44,7 +44,7 @@ from components.conversions.decode.cipher import *
 from components.run.coderunner import PistonCodeRunner
 from components.run.libdl import download_py_whl, NoSuitablePackageException
 from exceptions import InvalidExpressionException, InputInvalidException, FieldTooLongError, EncodeDecodeError
-from functions.general import autocomplete_list, wrap_in_codeblocks, lang_for_syntax_highlighting
+from functions.general import autocomplete_list, wrap_in_codeblocks, lang_for_syntax_highlighting, filter_codeblocks
 from ui.code_modals import CodeModal
 from ui.params_modals import ParamsModal
 from ui.safeembed import SafeEmbed
@@ -194,6 +194,8 @@ class Dev(BaseCog):
             runner = self.code_runner
             error_msg = None
             out = None
+            
+            code = filter_codeblocks(code)
 
 
             try:
@@ -254,6 +256,7 @@ class Dev(BaseCog):
                 logging.error(f"/run: error occurred: {ex_value}")
             return embed
 
+        
         if code:
             await ctx.defer()
             await ctx.respond(embed=await run_present_embed(code))
@@ -272,6 +275,8 @@ class Dev(BaseCog):
             runner = self.code_runner
             error_msg = None
             out = None
+            
+            code = filter_codeblocks(code)
 
             try:
                 whl = await download_py_whl(lib)
