@@ -55,7 +55,18 @@ def filter_codeblocks(content: str):
         else:
             return ""
         
-        
+def truncate(content: str):
+    # To prevent spam
+    if len(content) > 4096:
+        content = content[:4062] + "... truncated at 4096 chars ..." + "```"
+    split = content.splitlines()
+    if len(split) > 50:
+        content = "\n".join(split[:50])
+        if len(content) > 4063:
+            content = content[:4063] + "\n... truncated at 50 lines ..."
+        else:
+            content = content + "\n... truncated at 50 lines ..."
+    return content
 def dummy_func(*args, **kwargs):
     pass
 
