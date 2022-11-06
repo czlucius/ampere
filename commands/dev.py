@@ -218,7 +218,6 @@ class Dev(BaseCog):
 
                 output_wrapped = wrap_in_codeblocks(output) if output else "No output detected"
                 output_wrapped = truncate(output_wrapped)
-
                 embed = SafeEmbed(
                     title="Program result",
                     description=output_wrapped,
