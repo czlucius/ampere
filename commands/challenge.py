@@ -33,7 +33,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 load_dotenv("secret.env")
-os.makedirs("~/.config/aocd", exist_ok=True)
+os.makedirs(f"{str(Path.home())}/.config/aocd", exist_ok=True)
 token_path = os.path.join(str(Path.home()), ".config/aocd/token")
 if not os.path.isfile(token_path):
     # AoCD token does not exist
