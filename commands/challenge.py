@@ -30,13 +30,15 @@ from ui.aoc_btn import AoCSubmitButton
 from ui.safeembed import SafeEmbed
 
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv("secret.env")
 os.makedirs("~/.config/aocd", exist_ok=True)
-if not os.path.isfile("~/.config/aocd/token"):
+token_path = os.path.join(str(Path.home()), ".config/aocd/token")
+if not os.path.isfile(token_path):
     # AoCD token does not exist
     aocd_token = os.getenv("AOC_API_KEY")
-    with open("~/.config/aocd/token", "w") as f:
+    with open(token_path, "w") as f:
         f.write(aocd_token)
 
 
