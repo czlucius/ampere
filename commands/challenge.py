@@ -15,6 +15,7 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
+import os
 
 import discord
 from aocd.models import Puzzle
@@ -27,6 +28,17 @@ from components.aoc.scraping import scrape_challenge
 from exceptions import ChallengeUnavailableException
 from ui.aoc_btn import AoCSubmitButton
 from ui.safeembed import SafeEmbed
+
+from dotenv import load_dotenv
+
+load_dotenv("secret.env")
+os.makedirs("~/.config/aocd", exist_ok=True)
+if not os.path.isfile("~/.config/aocd/token"):
+    # AoCD token does not exist
+    aocd_token = os.getenv("AOC_API_KEY")
+    with open("~/.config/aocd/token", "w") as f:
+        f.write(aocd_token)
+
 
 this_year = datetime.date.today().year
 # As per Wikipedia, AoC started on 2015.
