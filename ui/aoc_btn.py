@@ -15,38 +15,20 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import logging
-import os
-
 import discord
 
-from commands.challenge import Challenge
-from commands.math import Math
-from commands.misc import Misc
-from commands.dev import Dev
-from commands.rand import Rand
-
-from dotenv import load_dotenv
-
-load_dotenv("secret.env")
-TOKEN = os.getenv("TOKEN")
-
-cogs = [Math, Misc, Dev, Rand, Challenge]
-bot = discord.Bot()
-
-logging.basicConfig(filename="discord.log",
-                    filemode='a',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.DEBUG)
-logging.debug("Start of program")
+from ui.aoc_modals import AoCModal
 
 
-@bot.event
-async def on_ready():
-    logging.info(f"{bot.user} has connected to Discord as {bot.user.name}")
+class AoCSubmitButton(discord.ui.View):
 
+    def __init__(self, year, day, part, *items):
+        super().__init__(*items)
+        self.year = year
+        self.day = day
+        self.part = part
 
-for cog in cogs:
-    bot.add_cog(cog(bot))
-bot.run(TOKEN)
+    @discord.ui.button(label="Submit", style=discord.ButtonStyle.primary, emoji="📤")
+    async def button_callback(self, button, interaction):
+        # Send a message when the button is clicked
+        await interaction.response.send_modal(AoCModal(self.year, self.day, self.part, title="Answer"))

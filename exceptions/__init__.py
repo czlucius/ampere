@@ -15,29 +15,45 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
+class ChallengeUnavailableException(Exception):
+    pass
+
+class AoCAlreadySolved(Warning):
+    pass
+
+
 class InvalidExpressionException(Exception):
     pass
+
 
 class TimeoutException(Exception):
     pass
 
+
 class FieldTooLongError(Exception):
     pass
+
 
 class InputInvalidException(Exception):
     pass
 
+
 class EncodeDecodeError(Exception):
     pass
+
 
 class InvalidParametersException(InputInvalidException):
     pass
 
+
 class CipherError(Exception):
     pass
 
+
 class CodeRunnerException(Exception):
     pass
+
 
 class InvalidOptionException(Exception):
     pass

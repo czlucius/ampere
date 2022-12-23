@@ -29,7 +29,7 @@ def dummy_escape(content: str) -> str:
 
 
 class SafeEmbed(discord.Embed):
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         if "description" in kwargs:
             if len(kwargs["description"]) > 4096:
                 kwargs["description"] = "Field over 4096 characters."

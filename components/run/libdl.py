@@ -15,9 +15,10 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import asyncio
+import json
 import logging
-import urllib.request, json
+
+import aiohttp
 
 from components.run.coderunner import PistonCodeRunner
 
@@ -36,12 +37,14 @@ async def download_py_whl(lib_name: str):
     # TODO pip also accepts *.tar.gz files, so we can download the relevant distribution from PyPI-Simple for libs w/o wheel distributions.
     # We can use pypi simple to fetch, and check if the lib is compatible through filename.
 
+    http_client = aiohttp.ClientSession()
+
     logging.info(f"download_py_whl: library name: {lib_name}")
     url = "https://www.wheelodex.org/json/projects/" + lib_name  # TODO please improve this!
     logging.info(f"download_py_whl: url name: {url}")
 
-    with urllib.request.urlopen(url) as url_data:
-        whl_data = json.load(url_data)
+    with http_client.get(url) as response:
+        whl_data = json.load(response.content)
     if not whl_data:
         raise NoSuitablePackageException("Library not found/does not have a wheel distribution.")
     try:
@@ -91,8 +94,8 @@ async def download_py_whl(lib_name: str):
     to_run = []
     for whl in processed:
         href = "https://www.wheelodex.org/" + whl["href"]
-        with urllib.request.urlopen(href) as url_data:
-            href_data = json.load(url_data)
+        with http_client.get(href) as response:
+            href_data = json.load(response.content)
         rollout_info = href_data["data"]
         whl_archs = rollout_info["arch"]
         arch_compat = False
@@ -131,8 +134,8 @@ async def download_py_whl(lib_name: str):
     filename1 = suitable_pkg["filename"]
     whl_url_to_dl = suitable_pkg["hrefdata"]["pypi"]["url"]
 
-    with urllib.request.urlopen(whl_url_to_dl) as pkg_raw:
-        pkg_contents = pkg_raw.read()
+    async with aiohttp.ClientSession().get(whl_url_to_dl) as response:
+        pkg_contents = await response.read()
 
     logging.info(f"Suitable pkg found: {[filename1]}")
 

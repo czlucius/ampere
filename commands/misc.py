@@ -16,17 +16,14 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-import discord
 
-from urllib.error import HTTPError
-from libretranslatepy import LibreTranslateAPI
-from commands.basecog import BaseCog
+import discord
 from discord.ext import commands
 
-from exceptions import InvalidOptionException
+from commands.basecog import BaseCog
+from functions.general import get_latency_ms
 from functions.io import json_open
 from ui.safeembed import SafeEmbed
-from functions.general import get_latency_ms, autocomplete_list
 
 
 class Misc(BaseCog):
