@@ -21,7 +21,7 @@ from typing import Dict
 import pymongo
 from dotenv import load_dotenv
 
-from exceptions import AoCException, AoCAlreadySolved
+from exceptions import AoCAlreadySolved
 
 load_dotenv("secret.env")
 url = os.getenv("AOC_LEADERBOARD_DB_URL")
