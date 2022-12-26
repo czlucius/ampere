@@ -18,7 +18,7 @@ Top.gg: https://top.gg/bot/979407128567623760
 ## Features/Commands
 
 ### Features:
-- Run code from multiple programming languages (via [Piston](https://github.com/engineer-man/piston))
+- Run code from multiple programming languages (via [Piston](https://github.com/engineer-man/piston)<sup>2</sup>)
 - Test yourself with challenges from **Advent of Code**<sup>1</sup>, complete with a submission function and a server-specific leaderboard
   - (You need to supply a MongoDB URI as well as a AoC session token)
 - Run Python code with **libraries from PyPI** (also via Piston<sup>2</sup>)
