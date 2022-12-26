@@ -75,7 +75,6 @@ class Server:
 
     def add_challenge(self, user: str, challenge: str, create_if_missing: bool = True):
         """Adds a challenge to the challenges of a given user. This method is idempotent."""
-        print("wgwgwg")
         if user in self.leaderboard:
             if challenge not in self.leaderboard[user]:
                 self.leaderboard[user].append(challenge)
