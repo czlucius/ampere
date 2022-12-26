@@ -17,7 +17,7 @@ Top.gg: https://top.gg/bot/979407128567623760
 
 ## Features/Commands
 
-Features:
+### Features:
 - Run code from multiple programming languages (via [Piston](https://github.com/engineer-man/piston))
 - Test yourself with challenges from **Advent of Code**<sup>1</sup>, complete with a submission function and a server-specific leaderboard
   - (You need to supply a MongoDB URI as well as a AoC session token)
@@ -29,7 +29,7 @@ Features:
 More features/commands coming soon
 
 
-Commands:
+### Commands:
 - Dev - conv, run, py_with_libs
 - Math - calculate, constants
 - Rand - rng
@@ -38,7 +38,7 @@ Commands:
 
 This bot uses slash commands.
 
-### Footnotes
+### Footnotes:
 - [1] Advent of Code is created and maintained by Eric Wastl, at https://adventofcode.com. 
   - If you are the creator and wish to see some changes in the AoC part of this program, please open an issue.
 - [2] Piston is maintained by Engineer Man, at https://github.com/engineer-man/piston.
