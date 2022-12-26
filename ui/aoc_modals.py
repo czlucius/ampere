@@ -23,6 +23,7 @@ from aocd import submit
 
 from components.aoc.parsing import parse_aoc_response
 from components.aoc.database import Server
+from exceptions import AoCAlreadySolved
 from ui.safeembed import SafeEmbed
 
 
@@ -57,7 +58,12 @@ class AoCModal(discord.ui.Modal):
             embed = SafeEmbed(title="Answer is correct!", description=f"{interaction.user.mention} got the answer "
                                                                       "correct!")
             # Since this method is idempotent, we can just call it here without an if check.
-            server.add_challenge(str(interaction.user.id), challenge_identifier)
+            try:
+                server.add_challenge(str(interaction.user.id), challenge_identifier)
+            except AoCAlreadySolved:
+                embed.safe_add_field("Note",
+                                     f"{interaction.user.mention} has done this challenge before correctly. The score "
+                                     "will not be updated.")
         elif response_code == 0:
             embed = SafeEmbed(title="Answer is wrong!", description=f"{interaction.user.mention} got the answer wrong!")
         elif response_code == -1:
@@ -77,10 +83,6 @@ class AoCModal(discord.ui.Modal):
                                                                           "and your answer is unable to be submitted.")
 
         print("user challs", user_challenges)
-        if Server.get_challenge_identifier(self.year, self.day, self.part) in user_challenges:
-            embed.safe_add_field("Note",
-                                 f"{interaction.user.mention} has done this challenge before correctly. The score "
-                                 "will not be updated.")
 
         embed.colour = discord.Colour.yellow()
         embed.safe_add_field("Year", self.year)
