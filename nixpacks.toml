@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ['python']
+
+[phases.build]
+cmds = ['pip install poetry']
+
+[start]
+cmd = 'sh scripts/bot.sh'
